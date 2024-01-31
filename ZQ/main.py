@@ -1,34 +1,21 @@
+# clean up imports in the final stage
 from enum import Enum
 from dataclasses import dataclass
+from typing import Dict, Tuple
 
-Grid = "dict[Position, Piece]"
-
+from pieces import *
+from board import *
 
 # Initialize a grid filled with pieces
 # data structure is a dictionary of a tuple of integers as the key
 # and a Piece Class as the value
 
+board = Board()
 
-def empty_board() -> Grid:
-    grid: Grid = {}  # empty dictionary
-    for x in range(8):
-        for y in range(8):
-            grid[(x, y)] = Piece(x, y)  # key of the dictionary is a tuple of ints
-    return grid
+starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 
+position_map = board.process_fen(starting_fen)
 
-class Color(Enum):
-    WHITE = 0
-    BLACK = 1
-    NONE = -1
+pieces = PieceFactory.create_pieces_from_position_map(position_map)
 
-
-@dataclass
-class Piece:
-    x: int
-    y: int
-    color: Color = Color.NONE
-
-
-grid = empty_board()
-print(grid)
+print(board.board)
