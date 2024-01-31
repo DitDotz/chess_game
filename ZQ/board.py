@@ -41,3 +41,20 @@ class Board:
     def map_pieces_to_board(self, pieces: List[Piece]) -> None:
         for piece in pieces:
             self.board[(piece.x, piece.y)] = piece
+
+    def __repr__(self) -> str:
+        representation = ""
+        for x in range(8):
+            if x != 0:
+                representation += (
+                    "|---" * 8 + "|\n"
+                )  # Add horizontal lines between rows
+
+            for y in range(8):
+                piece = self.board[(x, y)]
+                representation += (
+                    f"| {piece.repr} "  # Add vertical lines between columns
+                )
+            representation += "\n"
+
+        return representation
