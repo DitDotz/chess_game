@@ -17,4 +17,4 @@ starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 board.process_fen(starting_fen)
 piece_to_move = board.board[(0, 1)]
 board.move_piece(piece_to_move, 2, 3)
-print(board)
+print(board.board[(2, 3)])
