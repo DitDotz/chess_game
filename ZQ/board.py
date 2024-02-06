@@ -1,5 +1,6 @@
 from typing import Dict, Tuple
 from pieces import *
+from notation import *
 
 
 class Board:
@@ -47,20 +48,18 @@ class Board:
 
         return self.board
 
-    def move_piece(self, piece: Piece, new_x: int, new_y: int) -> None:
+    def move_piece(self, piece: Piece, fen_notation: str) -> None:
         """
         Move a piece to a new position on the board, disregarding valid moves.
         Replace the original position with an empty piece.
         """
         # Replace the original position with an empty piece
-        self.board[(piece.x, piece.y)] = Piece(piece.x, piece.y)
 
-        # Update the piece's position
-        piece.x = new_x
-        piece.y = new_y
+        self.board[(piece.x, piece.y)] = Piece(piece.x, piece.y)
+        new_piece = interpret_notation(fen_notation)
 
         # Place the piece at the new position
-        self.board[(new_x, new_y)] = piece
+        self.board[(new_piece.x, new_piece.y)] = new_piece
 
     def __repr__(self) -> str:
         representation = ""

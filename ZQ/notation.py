@@ -2,7 +2,7 @@ from typing import Tuple, Dict
 from pieces import *
 
 
-def interpret_notation(notation: str) -> Tuple[PieceType, Color, int, int]:
+def interpret_notation(notation: str) -> Piece:
     """
     Interpret chess algebraic notation and return the piece type, color, x, and y coordinates.
     """
@@ -33,9 +33,3 @@ def interpret_notation(notation: str) -> Tuple[PieceType, Color, int, int]:
     piece = Piece(x=x, y=y, color=color, type=piece_type)
 
     return piece
-
-
-# Test the function
-notation = "Nh4"
-piece = interpret_notation(notation)
-print(f"Interpreted notation {piece})")
