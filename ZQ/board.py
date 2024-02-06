@@ -33,11 +33,16 @@ class Board:
         for x in range(x, 8):
             for y in range(y, 8):
                 if (x, y) not in position_map:
-                    position_map[(x, y)] = " "
+                    position_map[(x, y)] = Piece(x, y)
 
         for position, fen_char in position_map.items():
             x, y = position
-            piece = Piece(x, y, type=PieceType(FEN_MAP[fen_char.lower()]))
+            piece = Piece(
+                x,
+                y,
+                type=PieceType(FEN_MAP[fen_char.lower()]),
+                color=Color.WHITE if fen_char.isupper() else Color.BLACK,
+            )
             self.board[position] = piece
 
         return self.board
