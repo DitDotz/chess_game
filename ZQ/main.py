@@ -14,8 +14,9 @@ from board import *
 
 board = Board()
 starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-position_map = board.process_fen(starting_fen)
-pieces = PieceFactory.create_pieces_from_position_map(position_map)
-board.map_pieces_to_board(pieces)
+board.process_fen(starting_fen)
+print(board.board)
 
-print(board)
+# pieces = PieceFactory.create_pieces_from_position_map(position_map)
+# board.map_pieces_to_board(pieces)
+# print(board)

@@ -65,16 +65,3 @@ class Piece:
         color = Color.WHITE if fen.isupper() else Color.BLACK
         type = FEN_MAP[fen.lower()]
         return Piece(x, y, color, type)
-
-
-class PieceFactory:
-    @staticmethod
-    def create_pieces_from_position_map(
-        position_map: Dict[Tuple[int, int], str]
-    ) -> List[Piece]:
-        pieces = []
-        for position, fen_char in position_map.items():
-            x, y = position
-            piece = Piece.initialize_from_fen_char(x, y, fen_char)
-            pieces.append(piece)
-        return pieces

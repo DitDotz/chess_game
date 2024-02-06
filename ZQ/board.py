@@ -1,29 +1,23 @@
 from typing import Dict, Tuple
 from pieces import *
 
-Position = Tuple[int, int]
-Grid = Dict[Position, Piece]
-
 
 class Board:
     def __init__(self) -> None:
         self.board = self.empty_board()
 
-    def empty_board(self) -> Grid:
-        grid: Grid = {}  # empty dictionary
+    def empty_board(self) -> Dict[Tuple[int, int], Piece]:
+        board: Dict[Tuple[int, int], Piece] = {}
         for x in range(8):
             for y in range(8):
-                grid[(x, y)] = Piece(x, y)  # key of the dictionary is a tuple of ints
-        return grid
+                board[(x, y)] = Piece(x, y)
+        return board
 
-    @staticmethod
-    def process_fen(fen: str) -> Dict[Position, str]:
+    def process_fen(self, fen: str) -> Dict[Tuple[int, int], Piece]:
         """
         Process the FEN string and return a dictionary containing the piece positions.
         """
-
         position_map: Dict[Tuple[int, int], str] = {}
-
         x, y = 0, 0
 
         for char in fen:
@@ -36,11 +30,17 @@ class Board:
                 position_map[(x, y)] = char
                 y += 1
 
-        return position_map
+        for x in range(x, 8):
+            for y in range(y, 8):
+                if (x, y) not in position_map:
+                    position_map[(x, y)] = " "
 
-    def map_pieces_to_board(self, pieces: List[Piece]) -> None:
-        for piece in pieces:
-            self.board[(piece.x, piece.y)] = piece
+        for position, fen_char in position_map.items():
+            x, y = position
+            piece = Piece(x, y, type=PieceType(FEN_MAP[fen_char.lower()]))
+            self.board[position] = piece
+
+        return self.board
 
     def __repr__(self) -> str:
         representation = ""
