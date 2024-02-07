@@ -52,28 +52,42 @@ class Board:
         """
         Move a piece to a new position on the board, disregarding valid moves.
         Replace the original position with an empty piece.
+        TODO change function such that it doesn't require input position
         """
         # Replace the original position with an empty piece
-
         self.board[(piece.x, piece.y)] = Piece(piece.x, piece.y)
+
+        # create new piece based on notation
+
         new_piece = interpret_notation(fen_notation)
 
         # Place the piece at the new position
         self.board[(new_piece.x, new_piece.y)] = new_piece
 
     def __repr__(self) -> str:
-        representation = ""
+        representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
+
         for x in range(8):
-            if x != 0:
-                representation += (
-                    "|---" * 8 + "|\n"
-                )  # Add horizontal lines between rows
+            representation += (
+                "|---" * 8 + "| " + str(8 - x) + "\n"
+            )  # Add horizontal lines between rows and rank numbers
 
             for y in range(8):
                 piece = self.board[(x, y)]
-                representation += (
-                    f"| {piece.repr} "  # Add vertical lines between columns
-                )
-            representation += "\n"
+                representation += f"| {piece.repr} "  # Add piece representation
+
+            representation += "|\n"  # End of row
+
+        representation += (
+            "|---" * 8 + "|\n"
+        )  # Add horizontal lines for the bottom of the board
+        representation += "  a   b   c   d   e   f   g   h\n"  # Column labels
 
         return representation
+
+
+board = Board()
+starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+board.process_fen(starting_fen)
+
+print(board)

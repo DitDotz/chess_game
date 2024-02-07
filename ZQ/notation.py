@@ -28,7 +28,6 @@ def interpret_notation(notation: str) -> Piece:
         x = ord(notation[2]) - ord("a")
         y = 8 - int(notation[3])
 
-    print(piece_type)
     color = Color.WHITE if notation[0].isupper() else Color.BLACK
     piece = Piece(x=x, y=y, color=color, type=piece_type)
 

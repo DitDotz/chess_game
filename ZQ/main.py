@@ -18,3 +18,15 @@ board.process_fen(starting_fen)
 piece_to_move = board.board[(0, 1)]
 board.move_piece(piece_to_move, "nc6")
 print(board)
+
+
+"""
+
+Iterate Through the Board: Traverse through the board to find pieces that match the piece type and color specified in the notation.
+
+Check Valid Moves: Verify if the identified pieces can legally move to the destination square specified in the notation.
+
+Disambiguate if Necessary: If there are multiple pieces of the same type that can move to the destination square, disambiguate by considering additional information such as the file or rank of the piece.
+Implementing this logic requires more complex parsing and understanding of the chess board state. You would need to integrate algorithms to identify pieces, validate moves, and handle disambiguation.
+
+"""
