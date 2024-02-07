@@ -84,10 +84,3 @@ class Board:
         representation += "  a   b   c   d   e   f   g   h\n"  # Column labels
 
         return representation
-
-
-board = Board()
-starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-board.process_fen(starting_fen)
-
-print(board)
