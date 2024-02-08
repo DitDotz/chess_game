@@ -10,8 +10,17 @@ def is_correct_format(notation: str) -> bool:
     if len(notation) != 5:
         return False  # Notation length should be exactly 5 characters
 
-    else:
-        return True
+    if notation[0].lower() not in FEN_MAP.keys():
+        return False
+
+    # Check if the positions are within the valid chess grid ('a1' to 'h8')
+    if notation[1] not in "abcdefgh" or notation[2] not in "12345678":
+        return False
+
+    if notation[3] not in "abcdefgh" or notation[4] not in "12345678":
+        return False
+
+    return True
 
 
 def piece_exists_in_original_position(
