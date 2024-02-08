@@ -1,10 +1,7 @@
 # clean up imports in the final stage
-from enum import Enum
-from dataclasses import dataclass
-from typing import Dict, Tuple
-
 from pieces import *
 from board import *
+from notation import interpret_notation
 
 # Initialize a grid filled with pieces
 # data structure is a dictionary of a tuple of integers as the key
@@ -15,13 +12,16 @@ from board import *
 board = Board()
 starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 board.process_fen(starting_fen)
-piece_to_move = board.board[(0, 1)]
-board.move_piece(piece_to_move, "nc6")
 print(board)
 
+notation = "nb8c6"
+
+board.move_piece(notation)
+
+print(board)
 
 """
-
+Piece capturing is not properly
 Iterate Through the Board: Traverse through the board to find pieces that match the piece type and color specified in the notation.
 
 Check Valid Moves: Verify if the identified pieces can legally move to the destination square specified in the notation.

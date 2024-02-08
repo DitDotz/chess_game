@@ -48,21 +48,18 @@ class Board:
 
         return self.board
 
-    def move_piece(self, piece: Piece, fen_notation: str) -> None:
+    def move_piece(self, notation: str) -> None:
         """
         Move a piece to a new position on the board, disregarding valid moves.
         Replace the original position with an empty piece.
-        TODO change function such that it doesn't require input position
         """
-        # Replace the original position with an empty piece
-        self.board[(piece.x, piece.y)] = Piece(piece.x, piece.y)
-
-        # create new piece based on notation
-
-        new_piece = interpret_notation(fen_notation)
-
-        # Place the piece at the new position
-        self.board[(new_piece.x, new_piece.y)] = new_piece
+        original_pos, updated_piece = interpret_notation(notation)
+        self.board[original_pos] = Piece(
+            original_pos[0], original_pos[1], type=PieceType.EMPTY
+        )
+        new_x, new_y = updated_piece.x, updated_piece.y
+        self.board[(new_x, new_y)] = updated_piece
+        return self.board
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels

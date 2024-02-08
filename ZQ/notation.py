@@ -2,61 +2,38 @@ from typing import Tuple, Dict
 from pieces import *
 
 
-def interpret_notation(notation: str) -> Piece:
+def interpret_notation(notation: str) -> List:
     """
     Interpret chess algebraic notation and return the piece type, color, x, and y coordinates.
     """
     # Extract the piece type, color, and destination coordinates from the notation
-    piece_type: PieceType = PieceType.EMPTY
-    color: Color = Color.NONE
-    x, y = None, None
 
-    # Handle notation with length 3
-    if len(notation) == 3:
-        piece_type = (
-            PieceType.PAWN
-        )  # By default, if only coordinates are given, it's a pawn move
+    piece_type = FEN_MAP[(notation[0].lower())]
+    piece_color = Color.WHITE if notation[0].isupper() else Color.BLACK
+    original_pos = convert_to_coordinates(notation[1:3])
+    final_pos = convert_to_coordinates(notation[3:5])
+    final_pos_piece = Piece(
+        x=final_pos[0], y=final_pos[1], type=piece_type, color=piece_color
+    )
 
-        if notation[0].lower() in FEN_MAP:
-            piece_type = FEN_MAP[notation[0].lower()]
-        x = ord(notation[1]) - ord("a")
-        y = 8 - int(notation[2])
-
-    # Handle notation with length 4 (captures or disambiguated moves)
-    elif len(notation) == 4:
-        piece_type = FEN_MAP[notation[0].lower()]
-        x = ord(notation[2]) - ord("a")
-        y = 8 - int(notation[3])
-
-    color = Color.WHITE if notation[0].isupper() else Color.BLACK
-    piece = Piece(x=x, y=y, color=color, type=piece_type)
-
-    return piece
+    return [original_pos, final_pos_piece]
 
 
-class ChessNotationConverter:
-    @staticmethod
-    def convert_to_coordinates(chess_notation: str) -> Tuple[int, int]:
-        """
-        Convert algebraic chess notation to grid coordinates.
-        """
-        column_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
+def convert_to_coordinates(chess_notation: str) -> Tuple[int, int]:
+    """
+    Convert algebraic chess notation to grid coordinates.
+    """
+    column_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
 
-        if len(chess_notation) != 2:
-            raise ValueError("Invalid chess notation format")
+    if len(chess_notation) != 2:
+        raise ValueError("Invalid chess notation format")
 
-        file_char, rank_char = chess_notation[0], chess_notation[1]
-        if file_char not in column_map or not rank_char.isdigit():
-            raise ValueError("Invalid chess notation format")
+    file_char, rank_char = chess_notation[0], chess_notation[1]
+    if file_char not in column_map or not rank_char.isdigit():
+        raise ValueError("Invalid chess notation format")
 
-        # Convert rank to 0-indexed row, and adjust for Python indexing
-        row = 8 - int(rank_char)
-        column = column_map[file_char]
+    # Convert rank to 0-indexed row, and adjust for Python indexing
+    row = 8 - int(rank_char)
+    column = column_map[file_char]
 
-        return row, column
-
-
-# Example usage:
-notation = "c1"
-row, column = ChessNotationConverter.convert_to_coordinates(notation)
-print(f"Chess notation '{notation}' corresponds to grid position: ({row}, {column})")
+    return row, column
