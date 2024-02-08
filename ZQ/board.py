@@ -50,16 +50,23 @@ class Board:
 
     def move_piece(self, notation: str) -> None:
         """
-        Move a piece to a new position on the board, disregarding valid moves.
+        Move a piece to a new position on the board.
         Replace the original position with an empty piece.
         """
+
+        while True:
+            if notation_is_valid(self.board, notation):
+                break
+            else:
+                print("Please input a valid notation.")
+                notation = input("Enter notation: ")
+
         original_pos, updated_piece = interpret_notation(notation)
         self.board[original_pos] = Piece(
             original_pos[0], original_pos[1], type=PieceType.EMPTY
         )
         new_x, new_y = updated_piece.x, updated_piece.y
         self.board[(new_x, new_y)] = updated_piece
-        return self.board
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels

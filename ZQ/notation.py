@@ -2,6 +2,50 @@ from typing import Tuple, Dict
 from pieces import *
 
 
+def is_correct_format(notation: str) -> bool:
+    """
+    Check if the chess algebraic notation has the correct format.
+    Valid notation format: <piece><origin><destination>
+    """
+    if len(notation) != 5:
+        return False  # Notation length should be exactly 5 characters
+
+    else:
+        return True
+
+
+def piece_exists_in_original_position(
+    board: Dict[Tuple[int, int], Piece], notation: str
+) -> bool:
+    """
+    Check if the piece specified in the notation exists in the original position on the board.
+    """
+    piece = notation[0]
+    origin_row, origin_col = convert_to_coordinates(notation[1:3])
+    color = Color.WHITE if notation[0].isupper() else Color.BLACK
+
+    if (origin_row, origin_col) not in board:
+        return False  # Original position is empty
+
+    original_piece = board[(origin_row, origin_col)]
+
+    if original_piece.type != FEN_MAP[piece.lower()] or original_piece.color != color:
+        return False  # Piece at original position does not match the specified piece in the notation
+
+    return True
+
+
+def notation_is_valid(board: Dict[Tuple[int, int], Piece], notation: str) -> bool:
+    """
+    Check if the chess algebraic notation is valid.
+    """
+    return (
+        is_correct_format(notation)
+        and piece_exists_in_original_position(board, notation)
+        # Add other validation checks as needed...
+    )
+
+
 def interpret_notation(notation: str) -> List:
     """
     Interpret chess algebraic notation and return the piece type, color, x, and y coordinates.
