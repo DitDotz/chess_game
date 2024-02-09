@@ -1,7 +1,7 @@
 # clean up imports in the final stage
 from pieces import *
 from board import *
-from notation import interpret_notation
+
 
 # Initialize a grid filled with pieces
 # data structure is a dictionary of a tuple of integers as the key

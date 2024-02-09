@@ -1,7 +1,7 @@
+import traceback
 from typing import List, Tuple, Dict
 
 from pieces import Piece, Color, PieceType
-from board import Board
 
 
 class KingValidation:
@@ -12,11 +12,18 @@ class KingValidation:
         """
         Find the position of the king of the specified color on the given board.
         """
+        king_position = (None, None)  # Initialize king position to None
+
         for piece in board.values():
             if piece.type == PieceType.KING and piece.color == color:
-                return (piece.x, piece.y)
+                king_position = (piece.x, piece.y)
+                break  # Exit the loop once the king is found
 
-        raise KingNotFound(color)
+        # Raise KingNotFound if king position is not found
+        if king_position == (None, None):
+            raise KingNotFound(color)
+
+        return king_position
 
 
 class KingNotFound(Exception):
@@ -24,4 +31,4 @@ class KingNotFound(Exception):
 
     def __init__(self, color: Color):
         self.color = color
-        super().__init__(f"King of color {color} is not found on the board")
+        super().__init__(f"{color} king not found")
