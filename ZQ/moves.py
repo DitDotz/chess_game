@@ -69,7 +69,26 @@ class KnightMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = None, None  # to edit
+
+        directions = [
+            (2, 1),
+            (2, -1),
+            (-2, 1),
+            (-2, -1),
+            (1, 2),
+            (1, -2),
+            (-1, 2),
+            (-1, -2),
+        ]
+
+        for dx, dy in directions:
+            new_x, new_y = x + dx, y + dy
+            if UniversalMovementValidation.is_within_board(
+                new_x, new_y
+            ) and UniversalMovementValidation.is_not_occupied_by_allies(
+                board, new_x, new_y, color
+            ):
+                valid_moves.append((new_x, new_y))
 
         return valid_moves
 
@@ -137,7 +156,8 @@ class PawnMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        direction = 1 if color == Color.WHITE else -1
+
+        direction = -1 if color == Color.WHITE else 1
 
         # Single move forward
         new_x, new_y = x + direction, y
