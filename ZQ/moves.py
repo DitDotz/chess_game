@@ -8,7 +8,9 @@ class PieceMovement(ABC):
 
 
 # Not fully implemented
-# is_king_in_check_after_move
+# not_pinned_by_king needs to be added to every piece except the kingMovement
+
+
 class KingMovement(PieceMovement):
     def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
         valid_moves = []
@@ -28,7 +30,7 @@ class KingMovement(PieceMovement):
                 and UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
                 )
-                and not UniversalMovementValidation.is_king_in_check_after_move()
+                and not UniversalMovementValidation.is_king_in_check_after_king_move()
             ):
                 valid_moves.append((new_x, new_y))
 
@@ -210,7 +212,7 @@ class UniversalMovementValidation:
         pass
 
     @staticmethod
-    def is_king_in_check_after_move():
+    def is_king_in_check_after_king_move():
         pass
 
     @staticmethod
