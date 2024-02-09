@@ -1,3 +1,10 @@
+from typing import List, Tuple, Dict
+from copy import deepcopy
+from abc import ABC, abstractmethod
+from pieces import Piece, Color, PieceType
+from king_validation import KingValidation
+
+
 class PieceMovement(ABC):
     def __init__(self, piece: Piece):
         self.piece = piece
@@ -5,10 +12,6 @@ class PieceMovement(ABC):
     @abstractmethod
     def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
         pass
-
-
-# Not fully implemented
-# not_pinned_by_king needs to be added to every piece except the kingMovement
 
 
 class KingMovement(PieceMovement):
@@ -44,11 +47,15 @@ class RookMovement(PieceMovement):
         color = self.piece.color
         new_x, new_y = None, None  # to edit
 
+        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
+            return valid_moves
+
         # Define directions for rook movement: up, down, left, right
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
         for dx, dy in directions:
             new_x, new_y = x + dx, y + dy
+
             while UniversalMovementValidation.is_within_board(new_x, new_y):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
@@ -71,6 +78,9 @@ class KnightMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
+
+        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
+            return valid_moves
 
         directions = [
             (2, 1),
@@ -101,6 +111,9 @@ class BishopMovement(PieceMovement):
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
 
+        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
+            return valid_moves
+
         # Define directions for bishop movement: diagonals
         directions = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
 
@@ -130,6 +143,9 @@ class QueenMovement(PieceMovement):
         color = self.piece.color
         new_x, new_y = None, None  # to edit
 
+        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
+            return valid_moves
+
         directions = [
             (dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if (dx, dy) != (0, 0)
         ]
@@ -158,6 +174,9 @@ class PawnMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
+
+        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
+            return valid_moves
 
         direction = -1 if color == Color.WHITE else 1
 
@@ -208,8 +227,57 @@ class UniversalMovementValidation:
         )
 
     @staticmethod
-    def not_pinned_by_king():
-        pass
+    def is_pinned_to_own_king(
+        piece: Piece, board: Dict[Tuple[int, int], Piece]
+    ) -> bool:
+        color = piece.color
+        king_x, king_y = KingValidation.find_king_position(board, color)
+
+        # Determine the direction vector from the piece to its own king
+        dx = 1 if king_x > piece.x else (-1 if king_x < piece.x else 0)
+        dy = 1 if king_y > piece.y else (-1 if king_y < piece.y else 0)
+
+        # Make a copy of the original board to simulate the move
+        simulated_board = deepcopy(board)
+
+        # Simulate the move of the piece on the simulated board
+        simulated_board[(piece.x, piece.y)] = Piece(
+            piece.x, piece.y, type=PieceType.EMPTY
+        )
+        simulated_board[(piece.x, piece.y)] = piece
+
+        # Iterate in the direction of the king on the simulated board to check for potential pins
+        x, y = piece.x + dx, piece.y + dy
+        while UniversalMovementValidation.is_within_board(x, y):
+            piece_at_position = simulated_board.get((x, y))
+
+            if not UniversalMovementValidation.is_not_occupied_by_allies(
+                board, x, y, color
+            ):
+                piece_at_position = board.get((x, y))
+                if piece_at_position:
+                    # if diagonal direction, check for opposing queen and bishop
+                    if abs(dx) == abs(dy) and piece_at_position.type in [
+                        PieceType.BISHOP,
+                        PieceType.QUEEN,
+                    ]:
+                        return True
+                    # if horizontal or vertical direction, check for opposing queen and rook
+                    elif (dx == 0 or dy == 0) and piece_at_position.type in [
+                        PieceType.QUEEN,
+                        PieceType.ROOK,
+                    ]:
+                        return True
+
+                    else:
+                        break
+                else:
+                    break
+
+            x += dx
+            y += dy
+
+        return False
 
     @staticmethod
     def is_king_in_check_after_king_move():
@@ -222,9 +290,6 @@ class UniversalMovementValidation:
         """
         Check if the square at the given coordinates is occupied by an opposing piece.
         """
-        if not UniversalMovementValidation.is_within_board(new_x, new_y):
-            return False
-
         piece_at_position = board[(new_x, new_y)]
 
         # Check if the square is occupied by an opposing piece
