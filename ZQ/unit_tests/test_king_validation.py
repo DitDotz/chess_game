@@ -26,7 +26,7 @@ def test_find_king_position():
 
 
 def test_find_king_position_no_kings_found():
-    # Create a sample board without kings
+
     board = {
         (0, 0): Piece(0, 0, PieceType.EMPTY, Color.NONE),
         (7, 7): Piece(7, 7, PieceType.EMPTY, Color.NONE),

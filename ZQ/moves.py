@@ -220,6 +220,7 @@ class UniversalMovementValidation:
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
     ):
         piece_at_position = board[(new_x, new_y)]
+        print(piece_at_position.color)
 
         return (
             piece_at_position.color != color
@@ -228,10 +229,13 @@ class UniversalMovementValidation:
 
     @staticmethod
     def is_pinned_to_own_king(
-        piece: Piece, board: Dict[Tuple[int, int], Piece]
+        piece: Piece, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
     ) -> bool:
+
         color = piece.color
+
         king_x, king_y = KingValidation.find_king_position(board, color)
+        print(king_x, king_y)
 
         # Determine the direction vector from the piece to its own king
         dx = 1 if king_x > piece.x else (-1 if king_x < piece.x else 0)
@@ -242,9 +246,12 @@ class UniversalMovementValidation:
 
         # Simulate the move of the piece on the simulated board
         simulated_board[(piece.x, piece.y)] = Piece(
-            piece.x, piece.y, type=PieceType.EMPTY
+            x=piece.x, y=piece.y, type=PieceType.EMPTY
         )
-        simulated_board[(piece.x, piece.y)] = piece
+
+        updated_piece = Piece(x=new_x, y=new_y, type=piece.type, color=color)
+
+        simulated_board[(new_x, new_y)] = updated_piece
 
         # Iterate in the direction of the king on the simulated board to check for potential pins
         x, y = piece.x + dx, piece.y + dy
@@ -285,15 +292,16 @@ class UniversalMovementValidation:
 
     @staticmethod
     def is_occupied_by_opposing(
-        board: List[List[Piece]], new_x: int, new_y: int, color: Color
+        board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
     ) -> bool:
         """
         Check if the square at the given coordinates is occupied by an opposing piece.
         """
-        piece_at_position = board[(new_x, new_y)]
+        piece_at_position = board.get((new_x, new_y))
 
         # Check if the square is occupied by an opposing piece
         return (
-            piece_at_position.color != color
+            piece_at_position is not None
+            and piece_at_position.color != color
             and piece_at_position.type != PieceType.EMPTY
         )

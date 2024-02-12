@@ -2,21 +2,22 @@
 from pieces import *
 from board import *
 
+# board = Board()
+# starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+# board.process_fen(starting_fen)
+# # notation = input("please input a notation")  # be1g5
+# notation = "nb1c3"
 
-# Initialize a grid filled with pieces
-# data structure is a dictionary of a tuple of integers as the key
-# and a Piece Class as the value
-# Generate a text repr of the board
+# board.move_piece(notation)
+# print(board)
 
+fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
 
 board = Board()
-starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-board.process_fen(starting_fen)
-# notation = input("please input a notation")  # be1g5
-notation = "nb1c3"
+board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
 
-board.move_piece(notation)
-print(board)
+origin_pos, final_pos_piece = interpret_notation("Rd4d1")
+print(origin_pos, final_pos_piece)
 
 """
 Check Valid Moves: Verify if the identified pieces can legally move to the destination square specified in the notation.
