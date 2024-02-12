@@ -66,6 +66,7 @@ class RookMovement(PieceMovement):
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         board, new_x, new_y, color
                     ):
+                        valid_moves.append((new_x, new_y))
                         break
                     new_x, new_y = new_x + dx, new_y + dy
                 else:
@@ -129,6 +130,7 @@ class BishopMovement(PieceMovement):
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         board, new_x, new_y, color
                     ):
+                        valid_moves.append((new_x, new_y))
                         break
                     new_x, new_y = new_x + dx, new_y + dy
                 else:
@@ -162,6 +164,7 @@ class QueenMovement(PieceMovement):
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         board, new_x, new_y, color
                     ):
+                        valid_moves.append((new_x, new_y))
                         break
                     new_x, new_y = new_x + dx, new_y + dy
                 else:
@@ -211,6 +214,7 @@ class PawnMovement(PieceMovement):
         return valid_moves
 
 
+# Unit test successful
 class UniversalMovementValidation:
     @staticmethod
     def is_within_board(new_x: int, new_y: int) -> bool:
@@ -289,7 +293,20 @@ class UniversalMovementValidation:
         return False
 
     @staticmethod
-    def is_king_in_check_after_king_move():
+    def is_king_in_check_after_king_move(
+        board: Dict[Tuple[int, int], Piece], king_piece: Piece, new_x: int, new_y: int
+    ) -> bool:
+        # simulate new board
+        simulated_board = deepcopy(board)
+        # Simulate the move of the piece on the simulated board
+        BoardUtils.simulate_piece_move(
+            simulated_board=simulated_board, piece=king_piece, new_x=new_x, new_y=new_y
+        )
+
+        # Check all directions, horizontal, vertical, diagonal for direct contact with opposing queen, bishop and
+        # this doesnt work because it doesn't cover moving to where a knight or pawn covers a square.
+        # need to have a list of available moves after each move
+
         pass
 
     @staticmethod
