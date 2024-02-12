@@ -3,6 +3,7 @@ from copy import deepcopy
 from abc import ABC, abstractmethod
 from pieces import Piece, Color, PieceType
 from king_validation import KingValidation
+from utility import BoardUtils
 
 
 class PieceMovement(ABC):
@@ -242,28 +243,23 @@ class UniversalMovementValidation:
         print(king_x, king_y)
 
         # Determine the direction vector from the king to the piece being moved
-        dx = -1 if king_x > piece.x else (1 if king_x < piece.x else 0)
-        dy = -1 if king_y > piece.y else (1 if king_y < piece.y else 0)
+        dx, dy = BoardUtils.get_direction_vector_from_king(
+            piece=piece, king_x=king_x, king_y=king_y
+        )
 
         # Make a copy of the original board to simulate the move
         simulated_board = deepcopy(board)
 
         # Simulate the move of the piece on the simulated board
-        simulated_board[(piece.x, piece.y)] = Piece(
-            x=piece.x, y=piece.y, type=PieceType.EMPTY
+        BoardUtils.simulate_piece_move(
+            simulated_board=simulated_board, piece=piece, new_x=new_x, new_y=new_y
         )
-
-        updated_piece = Piece(x=new_x, y=new_y, type=piece.type, color=color)
-
-        simulated_board[(new_x, new_y)] = updated_piece
 
         # Iterate from the direction of the king on the simulated board to check for potential pins
         x, y = piece.x + dx, piece.y + dy
         while UniversalMovementValidation.is_within_board(x, y):
             piece_at_position = simulated_board.get((x, y))
 
-            # This is the problem
-            # It is skipping over the entire if loop when is_not_occupied == True, i.e. if not True == if False
             if UniversalMovementValidation.is_not_occupied_by_allies(
                 simulated_board, x, y, color
             ):
@@ -273,20 +269,12 @@ class UniversalMovementValidation:
                 # If it returns true, it can either be the opposing color or empty.
                 # So your check should be if it is not empty
 
+                # if its the opposing color
                 if piece_at_position.type != PieceType.EMPTY:
-                    # If it is not empty, then it must be the opposing color
-                    # if diagonal direction, check for opposing queen and bishop
-                    if abs(dx) == abs(dy) and piece_at_position.type in [
-                        PieceType.BISHOP,
-                        PieceType.QUEEN,
-                    ]:
-                        return True
-                    # If horizontal or vertical direction, check for opposing queen and rook
-                    # Condition works because dx and dy cannot be both zero at the same time
-                    elif (dx == 0 or dy == 0) and piece_at_position.type in [
-                        PieceType.QUEEN,
-                        PieceType.ROOK,
-                    ]:
+
+                    if BoardUtils.is_in_direct_contact_with_opposing_piece(
+                        piece_at_position=piece_at_position, dx=dx, dy=dy
+                    ):
                         return True
 
                     else:
