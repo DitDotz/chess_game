@@ -219,6 +219,10 @@ class UniversalMovementValidation:
     def is_not_occupied_by_allies(
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
     ):
+        """
+        Returns true if its empty squares or opposing color piece
+        Implementation is taking movement into consideration only
+        """
         piece_at_position = board[(new_x, new_y)]
         print(piece_at_position.color)
 
@@ -237,9 +241,9 @@ class UniversalMovementValidation:
         king_x, king_y = KingValidation.find_king_position(board, color)
         print(king_x, king_y)
 
-        # Determine the direction vector from the piece to its own king
-        dx = 1 if king_x > piece.x else (-1 if king_x < piece.x else 0)
-        dy = 1 if king_y > piece.y else (-1 if king_y < piece.y else 0)
+        # Determine the direction vector from the king to the piece being moved
+        dx = -1 if king_x > piece.x else (1 if king_x < piece.x else 0)
+        dy = -1 if king_y > piece.y else (1 if king_y < piece.y else 0)
 
         # Make a copy of the original board to simulate the move
         simulated_board = deepcopy(board)
@@ -253,23 +257,32 @@ class UniversalMovementValidation:
 
         simulated_board[(new_x, new_y)] = updated_piece
 
-        # Iterate in the direction of the king on the simulated board to check for potential pins
+        # Iterate from the direction of the king on the simulated board to check for potential pins
         x, y = piece.x + dx, piece.y + dy
         while UniversalMovementValidation.is_within_board(x, y):
             piece_at_position = simulated_board.get((x, y))
 
-            if not UniversalMovementValidation.is_not_occupied_by_allies(
-                board, x, y, color
+            # This is the problem
+            # It is skipping over the entire if loop when is_not_occupied == True, i.e. if not True == if False
+            if UniversalMovementValidation.is_not_occupied_by_allies(
+                simulated_board, x, y, color
             ):
+
                 piece_at_position = board.get((x, y))
-                if piece_at_position:
+
+                # If it returns true, it can either be the opposing color or empty.
+                # So your check should be if it is not empty
+
+                if piece_at_position.type != PieceType.EMPTY:
+                    # If it is not empty, then it must be the opposing color
                     # if diagonal direction, check for opposing queen and bishop
                     if abs(dx) == abs(dy) and piece_at_position.type in [
                         PieceType.BISHOP,
                         PieceType.QUEEN,
                     ]:
                         return True
-                    # if horizontal or vertical direction, check for opposing queen and rook
+                    # If horizontal or vertical direction, check for opposing queen and rook
+                    # Condition works because dx and dy cannot be both zero at the same time
                     elif (dx == 0 or dy == 0) and piece_at_position.type in [
                         PieceType.QUEEN,
                         PieceType.ROOK,
@@ -279,10 +292,11 @@ class UniversalMovementValidation:
                     else:
                         break
                 else:
-                    break
+                    x += dx
+                    y += dy
 
-            x += dx
-            y += dy
+            else:
+                break
 
         return False
 
