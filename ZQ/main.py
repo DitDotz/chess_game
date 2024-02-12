@@ -16,22 +16,9 @@ from moves import *
 # fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
 
 board = Board()
-board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
+board.process_fen("4r3/4k4")
+rook_piece = board.board[(0, 4)]
 print(board)
 
-
-origin_pos, final_pos_piece = interpret_notation("Re4e6")
-piece_to_move = board.board[origin_pos]
-
-
-UniversalMovementValidation.is_pinned_to_own_king(
-    piece=piece_to_move,
-    board=board.board,
-    new_x=final_pos_piece.x,
-    new_y=final_pos_piece.y,
-)
-
-
-"""
-Check Valid Moves: Verify if the identified pieces can legally move to the destination square specified in the notation.
-"""
+rook_movement = RookMovement(rook_piece)
+valid_moves = rook_movement.get_valid_moves(board)

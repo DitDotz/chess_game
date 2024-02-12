@@ -11,12 +11,16 @@ class PieceMovement(ABC):
         self.piece = piece
 
     @abstractmethod
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         pass
 
 
 class KingMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -42,14 +46,13 @@ class KingMovement(PieceMovement):
 
 
 class RookMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece], piece: Piece
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
         new_x, new_y = None, None  # to edit
-
-        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
-            return valid_moves
 
         # Define directions for rook movement: up, down, left, right
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
@@ -58,6 +61,12 @@ class RookMovement(PieceMovement):
             new_x, new_y = x + dx, y + dy
 
             while UniversalMovementValidation.is_within_board(new_x, new_y):
+
+                if UniversalMovementValidation.is_pinned_to_own_king(
+                    piece=piece, board=board, new_x=new_x, new_y=new_y
+                ):
+                    return valid_moves
+
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
                 ):
@@ -76,7 +85,9 @@ class RookMovement(PieceMovement):
 
 
 class KnightMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -108,7 +119,9 @@ class KnightMovement(PieceMovement):
 
 
 class BishopMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -140,7 +153,9 @@ class BishopMovement(PieceMovement):
 
 
 class QueenMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -174,7 +189,9 @@ class QueenMovement(PieceMovement):
 
 
 class PawnMovement(PieceMovement):
-    def get_valid_moves(self, board: List[List[Piece]]) -> List[Tuple[int, int]]:
+    def get_valid_moves(
+        self, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
