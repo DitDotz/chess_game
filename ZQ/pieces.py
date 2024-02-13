@@ -29,6 +29,7 @@ FEN_MAP: Dict[str, PieceType] = {
     "n": PieceType.KNIGHT,
 }
 
+
 PIECE_STR: Dict[PieceType, Tuple[str, str]] = {
     PieceType.EMPTY: (" ", " "),
     PieceType.PAWN: ("♙", "♟"),

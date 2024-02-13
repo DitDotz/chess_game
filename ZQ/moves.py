@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Type
 from copy import deepcopy
 from abc import ABC, abstractmethod
 from pieces import Piece, Color, PieceType
@@ -47,7 +47,7 @@ class KingMovement(PieceMovement):
 
 class RookMovement(PieceMovement):
     def get_valid_moves(
-        self, board: Dict[Tuple[int, int], Piece], piece: Piece
+        self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
@@ -63,7 +63,7 @@ class RookMovement(PieceMovement):
             while UniversalMovementValidation.is_within_board(new_x, new_y):
 
                 if UniversalMovementValidation.is_pinned_to_own_king(
-                    piece=piece, board=board, new_x=new_x, new_y=new_y
+                    piece=self.piece, board=board, new_x=new_x, new_y=new_y
                 ):
                     return valid_moves
 
@@ -246,7 +246,6 @@ class UniversalMovementValidation:
         Implementation is taking movement into consideration only
         """
         piece_at_position = board[(new_x, new_y)]
-        print(piece_at_position.color)
 
         return (
             piece_at_position.color != color
@@ -261,7 +260,6 @@ class UniversalMovementValidation:
         color = piece.color
 
         king_x, king_y = KingValidation.find_king_position(board, color)
-        print(king_x, king_y)
 
         # Determine the direction vector from the king to the piece being moved
         dx, dy = BoardUtils.get_direction_vector_from_king(
@@ -341,3 +339,13 @@ class UniversalMovementValidation:
             and piece_at_position.color != color
             and piece_at_position.type != PieceType.EMPTY
         )
+
+
+PIECE_MOVE_MAP: Dict[PieceType, Type[PieceMovement]] = {
+    PieceType.PAWN: PawnMovement,
+    PieceType.ROOK: RookMovement,
+    PieceType.BISHOP: BishopMovement,
+    PieceType.QUEEN: QueenMovement,
+    PieceType.KING: KingMovement,
+    PieceType.KNIGHT: KnightMovement,
+}

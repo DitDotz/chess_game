@@ -1,6 +1,7 @@
-from typing import Dict, Tuple
-from pieces import *
-from notation import *
+from typing import Dict, Tuple, List
+from pieces import Piece, PieceType, Color, FEN_MAP
+from notation import notation_is_valid, interpret_notation
+from moves import PIECE_MOVE_MAP
 
 
 class Board:
@@ -48,25 +49,43 @@ class Board:
 
         return self.board
 
-    def move_piece(self, notation: str) -> None:
+    def move_piece(self) -> None:
         """
         Move a piece to a new position on the board.
         Replace the original position with an empty piece.
         """
-
+        notation = input("Enter notation: ")
         while True:
             if notation_is_valid(self.board, notation):
-                break
+                original_pos, updated_piece = interpret_notation(notation)
+                valid_moves = self.get_valid_moves(self.board[original_pos])
+                print(valid_moves)
+
+                if (updated_piece.x, updated_piece.y) in valid_moves:
+                    self.board[original_pos] = Piece(
+                        original_pos[0], original_pos[1], type=PieceType.EMPTY
+                    )
+                    new_x, new_y = updated_piece.x, updated_piece.y
+                    self.board[(new_x, new_y)] = updated_piece
+                    break
+                else:
+                    print("Invalid move. Please try again.")
+                    notation = input("Enter notation: ")
+
             else:
                 print("Please input a valid notation.")
                 notation = input("Enter notation: ")
 
-        original_pos, updated_piece = interpret_notation(notation)
-        self.board[original_pos] = Piece(
-            original_pos[0], original_pos[1], type=PieceType.EMPTY
-        )
-        new_x, new_y = updated_piece.x, updated_piece.y
-        self.board[(new_x, new_y)] = updated_piece
+    def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the given piece based on its type.
+        """
+        piece_movement_class = PIECE_MOVE_MAP[piece.type]
+        piece_movement_instance = piece_movement_class(piece)
+        if piece_movement_instance:
+            return piece_movement_instance.get_valid_moves(self.board)
+        else:
+            return []
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
