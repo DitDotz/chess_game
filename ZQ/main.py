@@ -19,5 +19,7 @@ print(board)
 board.move_piece()
 print(board)
 
-# Can't move Re4e6 for some reason
+# Re4e5
 # But the move works in test_moves
+# simulated board is not updating the rook movement
+# piece_at_position should be a rook

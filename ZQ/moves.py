@@ -61,23 +61,25 @@ class RookMovement(PieceMovement):
             new_x, new_y = x + dx, y + dy
 
             while UniversalMovementValidation.is_within_board(new_x, new_y):
-
-                if UniversalMovementValidation.is_pinned_to_own_king(
-                    piece=self.piece, board=board, new_x=new_x, new_y=new_y
-                ):
-                    return valid_moves
-
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
                 ):
+
+                    if UniversalMovementValidation.is_pinned_to_own_king(
+                        piece=self.piece, board=board, new_x=new_x, new_y=new_y
+                    ):
+                        valid_moves = []  # No moves possible
+                        return valid_moves
+
                     valid_moves.append((new_x, new_y))
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         board, new_x, new_y, color
                     ):
-                        valid_moves.append((new_x, new_y))
                         break
+
                     new_x, new_y = new_x + dx, new_y + dy
+
                 else:
                     break
 
