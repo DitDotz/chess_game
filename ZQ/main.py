@@ -1,6 +1,11 @@
 from board import Board
 from notation import interpret_notation
-from moves import RookMovement, BishopMovement, UniversalMovementValidation
+from moves import (
+    RookMovement,
+    BishopMovement,
+    UniversalMovementValidation,
+    QueenMovement,
+)
 from copy import deepcopy
 from utility import BoardUtils
 
@@ -14,12 +19,13 @@ from utility import BoardUtils
 # board.move_piece(notation)
 # print(board)
 
-fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
+fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
 board = Board()
 board.process_fen(fen)
-origin_pos, final_pos_piece = interpret_notation("Bd4b6")
+print(board)
+origin_pos, final_pos_piece = interpret_notation("Qe2e1")
 
 bishop = board.board[origin_pos]
-bishop_movement = BishopMovement(bishop)
+bishop_movement = QueenMovement(bishop)
 valid_moves = bishop_movement.get_valid_moves(board.board)
 print(valid_moves)

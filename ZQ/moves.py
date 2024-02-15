@@ -185,32 +185,48 @@ class QueenMovement(PieceMovement):
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = None, None  # to edit
 
-        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
-            return valid_moves
-
+        # Define directions for rook movement: up, down, left, right
         directions = [
             (dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if (dx, dy) != (0, 0)
         ]
-
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
-            while UniversalMovementValidation.is_within_board(new_x, new_y):
+            dir_x, dir_y = x + dx, y + dy
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=dir_x,
+                new_y=dir_y,
+            )
+
+            while UniversalMovementValidation.is_within_board(dir_x, dir_y):
+
+                # check original board
                 if UniversalMovementValidation.is_not_occupied_by_allies(
-                    board, new_x, new_y, color
+                    board, dir_x, dir_y, color
                 ):
-                    valid_moves.append((new_x, new_y))
+                    # check using simulated board
+                    if UniversalMovementValidation.is_pinned_to_own_king(
+                        originalPiece=self.piece, board=simulated_board
+                    ):
+                        break
+
+                    valid_moves.append((dir_x, dir_y))
+
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        board, new_x, new_y, color
+                        simulated_board, dir_x, dir_y, color
                     ):
-                        valid_moves.append((new_x, new_y))
                         break
-                    new_x, new_y = new_x + dx, new_y + dy
+
+                    dir_x, dir_y = dir_x + dx, dir_y + dy
+
                 else:
                     break
 
@@ -266,6 +282,7 @@ class UniversalMovementValidation:
     def is_within_board(new_x: int, new_y: int) -> bool:
         return 0 <= new_x < 8 and 0 <= new_y < 8
 
+    # Used on original board
     @staticmethod
     def is_not_occupied_by_allies(
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
@@ -281,7 +298,7 @@ class UniversalMovementValidation:
             or piece_at_position.type == PieceType.EMPTY
         )
 
-    # board refers to simulated board across in this function below
+    # board refers to simulated board
     @staticmethod
     def is_pinned_to_own_king(
         originalPiece: Piece, board: Dict[Tuple[int, int], Piece]
@@ -336,6 +353,7 @@ class UniversalMovementValidation:
 
         return False
 
+    # operated on simulated board (not sure if there is any difference)
     @staticmethod
     def is_occupied_by_opposing(
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color

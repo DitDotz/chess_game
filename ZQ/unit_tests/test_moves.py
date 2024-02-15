@@ -7,7 +7,12 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from moves import UniversalMovementValidation, RookMovement, BishopMovement
+from moves import (
+    UniversalMovementValidation,
+    RookMovement,
+    BishopMovement,
+    QueenMovement,
+)
 from pieces import Piece, PieceType, Color
 from board import Board
 from notation import interpret_notation
@@ -255,7 +260,7 @@ def test_BishopMovement_valid_moves_along_x_ray_direction():
     assert valid_moves == expected_moves
 
 
-def test_BishopMovement_valid_moves_capture():
+def test_BishopMovement_valid_moves_capture_along_x_ray():
     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
     board = Board()
     board.process_fen(fen)
@@ -265,4 +270,61 @@ def test_BishopMovement_valid_moves_capture():
     valid_moves = bishop_movement.get_valid_moves(board.board)
 
     expected_moves = [(3, 2), (2, 1)]
+    assert valid_moves == expected_moves
+
+
+def test_QueenMovement_valid_moves_capture_along_x_ray_diagonal():
+    fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Qd4b6")
+    queen = board.board[origin_pos]
+    queen_movement = QueenMovement(queen)
+    valid_moves = queen_movement.get_valid_moves(board.board)
+
+    expected_moves = [(3, 2), (2, 1)]
+    assert valid_moves == expected_moves
+
+
+def test_QueenMovement_valid_moves_capture_along_x_ray_vertical():
+
+    fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Qe4d3")
+    queen = board.board[origin_pos]
+    queen_movement = QueenMovement(queen)
+    valid_moves = queen_movement.get_valid_moves(board.board)
+
+    expected_moves = [(3, 4), (2, 4), (1, 4), (0, 4)]
+    assert valid_moves == expected_moves
+
+
+def test_QueenMovement_valid_moves_no_pins():
+    fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Qe2e1")
+    queen = board.board[origin_pos]
+    queen_movement = QueenMovement(queen)
+    valid_moves = queen_movement.get_valid_moves(board.board)
+    expected_moves = [
+        (5, 3),
+        (4, 2),
+        (3, 1),
+        (2, 0),
+        (5, 5),
+        (4, 6),
+        (3, 7),
+        (6, 3),
+        (6, 2),
+        (6, 1),
+        (6, 0),
+        (6, 5),
+        (6, 6),
+        (6, 7),
+        (7, 3),
+        (7, 4),
+        (7, 5),
+    ]
     assert valid_moves == expected_moves
