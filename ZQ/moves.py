@@ -134,6 +134,7 @@ class BishopMovement(PieceMovement):
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -143,9 +144,7 @@ class BishopMovement(PieceMovement):
 
         for dx, dy in directions:
             dir_x, dir_y = x + dx, y + dy
-            # Make a copy of the original board to simulate the move
             simulated_board = deepcopy(board)
-
             # Simulate the move of the piece on the simulated board in available direction
             BoardUtils.simulate_piece_move(
                 simulated_board=simulated_board,
@@ -156,15 +155,13 @@ class BishopMovement(PieceMovement):
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
 
-                # checked using original board
+                # check original board
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-                    # checked using simulation board
-                    # this must update when the direction updates
-                    # rename this to self_king_in_check_after_self_turn
+                    # check using simulated board
                     if UniversalMovementValidation.is_pinned_to_own_king(
-                        piece=self.piece, board=simulated_board
+                        originalPiece=self.piece, board=simulated_board
                     ):
                         break
 
@@ -172,7 +169,7 @@ class BishopMovement(PieceMovement):
 
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        board, dir_x, dir_y, color
+                        simulated_board, dir_x, dir_y, color
                     ):
                         break
 

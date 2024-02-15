@@ -7,7 +7,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from moves import UniversalMovementValidation, RookMovement
+from moves import UniversalMovementValidation, RookMovement, BishopMovement
 from pieces import Piece, PieceType, Color
 from board import Board
 from notation import interpret_notation
@@ -233,27 +233,36 @@ def test_BishopMovement_valid_moves_pinned():
     board = Board()
     board.process_fen(fen)
     origin_pos, final_pos_piece = interpret_notation("Be4d3")
-    rook = board.board[origin_pos]
-    rook_movement = RookMovement(rook)
-    valid_moves = rook_movement.get_valid_moves(
-        board.board, final_pos_piece.x, final_pos_piece.y
-    )
+    bishop = board.board[origin_pos]
+    bishop_movement = BishopMovement(bishop)
+    valid_moves = bishop_movement.get_valid_moves(board.board)
 
     expected_moves = []
     assert valid_moves == expected_moves
 
 
-# def test_BishopMovement_valid_moves_():
+def test_BishopMovement_valid_moves_along_x_ray_direction():
 
-#     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
-#     board = Board()
-#     board.process_fen(fen)
-#     origin_pos, final_pos_piece = interpret_notation("Bf4g5")
-#     rook = board.board[origin_pos]
-#     rook_movement = RookMovement(rook)
-#     valid_moves = rook_movement.get_valid_moves(
-#         board.board, final_pos_piece.x, final_pos_piece.y
-#     )
+    fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Bf4g5")
+    bishop = board.board[origin_pos]
+    bishop_movement = BishopMovement(bishop)
+    valid_moves = bishop_movement.get_valid_moves(board.board)
 
-#     expected_moves = [(3, 6), (2, 7)]
-#     assert valid_moves == expected_moves
+    expected_moves = [(3, 6), (2, 7)]
+    assert valid_moves == expected_moves
+
+
+def test_BishopMovement_valid_moves_capture():
+    fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Bd4b6")
+    bishop = board.board[origin_pos]
+    bishop_movement = BishopMovement(bishop)
+    valid_moves = bishop_movement.get_valid_moves(board.board)
+
+    expected_moves = [(3, 2), (2, 1)]
+    assert valid_moves == expected_moves

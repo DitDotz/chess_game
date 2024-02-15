@@ -58,9 +58,8 @@ class Board:
         while True:
             if notation_is_valid(self.board, notation):
                 original_pos, updated_piece = interpret_notation(notation)
-                valid_moves = self.get_valid_moves(
-                    self.board[original_pos], updated_piece.x, updated_piece.y
-                )
+                valid_moves = self.get_valid_moves(self.board[original_pos])
+
                 print(valid_moves)
 
                 if (updated_piece.x, updated_piece.y) in valid_moves:
@@ -78,18 +77,16 @@ class Board:
                 print("Please input a valid notation.")
                 notation = input("Enter notation: ")
 
-    def get_valid_moves(
-        self, piece: Piece, new_x: int, new_y: int
-    ) -> List[Tuple[int, int]]:
+    def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
         """
         Get the valid moves for the given piece based on its type.
         """
-        piece_movement_class = PIECE_MOVE_MAP[piece.type]
-        piece_movement_instance = piece_movement_class(piece)
+        pieceMovement_class = PIECE_MOVE_MAP[piece.type]
+        piece_movement_instance = pieceMovement_class(piece)
         if piece_movement_instance:
-            return piece_movement_instance.get_valid_moves(self.board, new_x, new_y)
+            return piece_movement_instance.get_valid_moves(self.board)
         else:
-            return []
+            print("Piece not recognized for movement")
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
