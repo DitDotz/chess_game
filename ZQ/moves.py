@@ -122,38 +122,38 @@ class KnightMovement(PieceMovement):
 
 class BishopMovement(PieceMovement):
     def get_valid_moves(
-        self, board: Dict[Tuple[int, int], Piece]
+        self, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
     ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = None, None  # to edit
+        new_x, new_y = new_x, new_y
 
-        # Define directions for bishop movement
+        # Define directions for rook movement: up, down, left, right
         directions = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
 
         for dx, dy in directions:
             dir_x, dir_y = x + dx, y + dy
 
-            while UniversalMovementValidation.is_within_board(new_x, new_y):
+            while UniversalMovementValidation.is_within_board(dir_x, dir_y):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
-                    board, new_x, new_y, color
+                    board, dir_x, dir_y, color
                 ):
 
                     if UniversalMovementValidation.is_pinned_to_own_king(
                         piece=self.piece, board=board, new_x=new_x, new_y=new_y
                     ):
-                        valid_moves = []  # No moves possible
-                        return valid_moves
+                        break
 
-                    valid_moves.append((new_x, new_y))
+                    valid_moves.append((dir_x, dir_y))
+
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        board, new_x, new_y, color
+                        board, dir_x, dir_y, color
                     ):
                         break
 
-                    new_x, new_y = new_x + dx, new_y + dy
+                    dir_x, dir_y = dir_x + dx, dir_y + dy
 
                 else:
                     break

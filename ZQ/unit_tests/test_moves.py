@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from moves import UniversalMovementValidation
+from moves import UniversalMovementValidation, RookMovement
 from pieces import Piece, PieceType, Color
 from board import Board
 from notation import interpret_notation
@@ -164,3 +164,52 @@ def test_is_pinned_to_own_king_knight_not_involved():
         )
         == False
     )
+
+
+# Test RookMovement
+def test_RookMovement_valid_moves_along_x_ray_direction():
+
+    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Re4e6")
+    rook = board.board[origin_pos]
+    rook_movement = RookMovement(rook)
+    valid_moves = rook_movement.get_valid_moves(
+        board.board, final_pos_piece.x, final_pos_piece.y
+    )
+
+    expected_moves = [(3, 4), (2, 4), (1, 4), (0, 4)]
+    assert valid_moves == expected_moves
+
+
+def test_RookMovement_valid_moves_pinned():
+
+    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Rd4d5")
+    rook = board.board[origin_pos]
+    rook_movement = RookMovement(rook)
+    valid_moves = rook_movement.get_valid_moves(
+        board.board, final_pos_piece.x, final_pos_piece.y
+    )
+
+    expected_moves = []
+    assert valid_moves == expected_moves
+
+
+def test_RookMovement_valid_moves_capture():
+
+    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Re2e1")
+    rook = board.board[origin_pos]
+    rook_movement = RookMovement(rook)
+    valid_moves = rook_movement.get_valid_moves(
+        board.board, final_pos_piece.x, final_pos_piece.y
+    )
+
+    expected_moves = [(7, 4), (6, 5), (6, 6), (6, 7), (6, 3), (6, 2), (6, 1), (6, 0)]
+    assert valid_moves == expected_moves
