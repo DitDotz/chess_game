@@ -1,4 +1,5 @@
 from typing import Dict, Tuple
+from copy import deepcopy
 
 # import pytest
 import os
@@ -10,6 +11,7 @@ from moves import UniversalMovementValidation, RookMovement
 from pieces import Piece, PieceType, Color
 from board import Board
 from notation import interpret_notation
+from utility import BoardUtils
 
 
 def test_is_within_board_true():
@@ -79,22 +81,24 @@ def test_is_occupied_by_opposing():
 
 
 def test_is_pinned_to_own_king_diagonal_queen_pin():
-    # piece will be moved arbitrarily without consideration of valid moves
-    # this means it will likely break once valid moves are incorporated
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
-
     board = Board()
-    board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
+    board.process_fen(fen)
     origin_pos, final_pos_piece = interpret_notation("Rd4d1")
     piece_to_move = board.board[origin_pos]
-    print(board)
+    simulated_board = deepcopy(board.board)
+    # Simulate the move of the piece on the simulated board in available direction
+    BoardUtils.simulate_piece_move(
+        simulated_board=simulated_board,
+        piece=piece_to_move,
+        new_x=final_pos_piece.x,
+        new_y=final_pos_piece.y,
+    )
 
     assert (
         UniversalMovementValidation.is_pinned_to_own_king(
-            piece=piece_to_move,
-            board=board.board,
-            new_x=final_pos_piece.x,
-            new_y=final_pos_piece.y,
+            originalPiece=piece_to_move,
+            board=simulated_board,
         )
         == True
     )
@@ -110,21 +114,25 @@ def test_is_pinned_to_own_king_diagonal_bishop_pin():
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
     origin_pos, final_pos_piece = interpret_notation("Rf4f1")
     piece_to_move = board.board[origin_pos]
+    simulated_board = deepcopy(board.board)
+    # Simulate the move of the piece on the simulated board in available direction
+    BoardUtils.simulate_piece_move(
+        simulated_board=simulated_board,
+        piece=piece_to_move,
+        new_x=final_pos_piece.x,
+        new_y=final_pos_piece.y,
+    )
 
     assert (
         UniversalMovementValidation.is_pinned_to_own_king(
-            piece=piece_to_move,
-            board=board.board,
-            new_x=final_pos_piece.x,
-            new_y=final_pos_piece.y,
+            originalPiece=piece_to_move,
+            board=simulated_board,
         )
         == True
     )
 
 
 def test_is_pinned_to_own_king_can_move_along_x_ray_direction():
-    # piece will be moved arbitrarily without consideration of valid moves
-    # this means it will likely break once valid moves are incorporated
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
 
     board = Board()
@@ -132,21 +140,25 @@ def test_is_pinned_to_own_king_can_move_along_x_ray_direction():
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
     origin_pos, final_pos_piece = interpret_notation("Re4e6")
     piece_to_move = board.board[origin_pos]
+    simulated_board = deepcopy(board.board)
+    # Simulate the move of the piece on the simulated board in available direction
+    BoardUtils.simulate_piece_move(
+        simulated_board=simulated_board,
+        piece=piece_to_move,
+        new_x=final_pos_piece.x,
+        new_y=final_pos_piece.y,
+    )
 
     assert (
         UniversalMovementValidation.is_pinned_to_own_king(
-            piece=piece_to_move,
-            board=board.board,
-            new_x=final_pos_piece.x,
-            new_y=final_pos_piece.y,
+            originalPiece=piece_to_move,
+            board=simulated_board,
         )
         == False
     )
 
 
 def test_is_pinned_to_own_king_knight_not_involved():
-    # piece will be moved arbitrarily without consideration of valid moves
-    # this means it will likely break once valid moves are incorporated
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
 
     board = Board()
@@ -154,13 +166,19 @@ def test_is_pinned_to_own_king_knight_not_involved():
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
     origin_pos, final_pos_piece = interpret_notation("Re2a2")
     piece_to_move = board.board[origin_pos]
+    simulated_board = deepcopy(board.board)
+    # Simulate the move of the piece on the simulated board in available direction
+    BoardUtils.simulate_piece_move(
+        simulated_board=simulated_board,
+        piece=piece_to_move,
+        new_x=final_pos_piece.x,
+        new_y=final_pos_piece.y,
+    )
 
     assert (
         UniversalMovementValidation.is_pinned_to_own_king(
-            piece=piece_to_move,
-            board=board.board,
-            new_x=final_pos_piece.x,
-            new_y=final_pos_piece.y,
+            originalPiece=piece_to_move,
+            board=simulated_board,
         )
         == False
     )
@@ -213,3 +231,35 @@ def test_RookMovement_valid_moves_capture():
 
     expected_moves = [(7, 4), (6, 5), (6, 6), (6, 7), (6, 3), (6, 2), (6, 1), (6, 0)]
     assert valid_moves == expected_moves
+
+
+def test_BishopMovement_valid_moves_pinned():
+
+    fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Be4d3")
+    rook = board.board[origin_pos]
+    rook_movement = RookMovement(rook)
+    valid_moves = rook_movement.get_valid_moves(
+        board.board, final_pos_piece.x, final_pos_piece.y
+    )
+
+    expected_moves = []
+    assert valid_moves == expected_moves
+
+
+# def test_BishopMovement_valid_moves_():
+
+#     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
+#     board = Board()
+#     board.process_fen(fen)
+#     origin_pos, final_pos_piece = interpret_notation("Bf4g5")
+#     rook = board.board[origin_pos]
+#     rook_movement = RookMovement(rook)
+#     valid_moves = rook_movement.get_valid_moves(
+#         board.board, final_pos_piece.x, final_pos_piece.y
+#     )
+
+#     expected_moves = [(3, 6), (2, 7)]
+#     assert valid_moves == expected_moves

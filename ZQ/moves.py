@@ -122,26 +122,39 @@ class KnightMovement(PieceMovement):
 
 class BishopMovement(PieceMovement):
     def get_valid_moves(
-        self, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
+        self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = new_x, new_y
 
         # Define directions for rook movement: up, down, left, right
         directions = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
 
         for dx, dy in directions:
             dir_x, dir_y = x + dx, y + dy
+            # Make a copy of the original board to simulate the move
+            simulated_board = deepcopy(board)
+
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=dir_x,
+                new_y=dir_y,
+            )
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
+
+                # checked using original board
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-
+                    # checked using simulation board
+                    # this must update when the direction updates
+                    # rename this to self_king_in_check_after_self_turn
                     if UniversalMovementValidation.is_pinned_to_own_king(
-                        piece=self.piece, board=board, new_x=new_x, new_y=new_y
+                        piece=self.piece, board=simulated_board
                     ):
                         break
 
@@ -261,62 +274,56 @@ class UniversalMovementValidation:
             or piece_at_position.type == PieceType.EMPTY
         )
 
+    # board refers to simulated board across in this function below
     @staticmethod
     def is_pinned_to_own_king(
-        piece: Piece, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
+        originalPiece: Piece, board: Dict[Tuple[int, int], Piece]
     ) -> bool:
-        # Make a copy of the original board to simulate the move
-        simulated_board = deepcopy(board)
 
-        # Simulate the move of the piece on the simulated board
-        BoardUtils.simulate_piece_move(
-            simulated_board=simulated_board, piece=piece, new_x=new_x, new_y=new_y
+        # Find position of king in simulated position
+        king_x, king_y = KingValidation.find_king_position(board, originalPiece.color)
+
+        # Determine the direction vector from the king to the piece being moved in original position
+        # if piece moved is the king itself, then check all directions
+        dx, dy = BoardUtils.get_direction_vector_from_king(
+            piece=originalPiece, king_x=king_x, king_y=king_y
         )
 
-        color = piece.color
+        if dx == 0 and dy == 0:
+            print("checks for king itself not implemented yet")
+            return True
 
-        king_x, king_y = KingValidation.find_king_position(board, color)
-        simulated_king_x, simulated_king_y = KingValidation.find_king_position(
-            simulated_board, color
-        )
+        # Iterate from the direction of the king on the simulated board to check for potential pins
+        x, y = king_x + dx, king_y + dy
 
-        # A piece other than the king has moved
-        if king_x == simulated_king_x and king_y == simulated_king_y:
-            # Determine the direction vector from the king to the piece being moved in original position
-            dx, dy = BoardUtils.get_direction_vector_from_king(
-                piece=piece, king_x=king_x, king_y=king_y
-            )
+        while UniversalMovementValidation.is_within_board(x, y):
+            piece_at_position = board.get((x, y))
 
-            # Iterate from the direction of the king on the simulated board to check for potential pins
-            x, y = piece.x + dx, piece.y + dy
-            while UniversalMovementValidation.is_within_board(x, y):
-                piece_at_position = simulated_board.get((x, y))
+            if UniversalMovementValidation.is_not_occupied_by_allies(
+                board, x, y, originalPiece.color
+            ):
 
-                if UniversalMovementValidation.is_not_occupied_by_allies(
-                    simulated_board, x, y, color
-                ):
+                piece_at_position = board.get((x, y))
 
-                    piece_at_position = simulated_board.get((x, y))
+                # If it returns true, it can either be the opposing color or empty.
+                # So your check should be if it is not empty
 
-                    # If it returns true, it can either be the opposing color or empty.
-                    # So your check should be if it is not empty
+                # if its the opposing color
+                if piece_at_position.type != PieceType.EMPTY:
 
-                    # if its the opposing color
-                    if piece_at_position.type != PieceType.EMPTY:
+                    if BoardUtils.is_in_direct_contact_with_opposing_piece(
+                        piece_at_position=piece_at_position, dx=dx, dy=dy
+                    ):
+                        return True
 
-                        if BoardUtils.is_in_direct_contact_with_opposing_piece(
-                            piece_at_position=piece_at_position, dx=dx, dy=dy
-                        ):
-                            return True
-
-                        else:
-                            break
                     else:
-                        x += dx
-                        y += dy
-
+                        break
                 else:
-                    break
+                    x += dx
+                    y += dy
+
+            else:
+                break
 
         # Implement for when king itself has moved
 
