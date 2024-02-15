@@ -193,9 +193,7 @@ def test_RookMovement_valid_moves_along_x_ray_direction():
     origin_pos, final_pos_piece = interpret_notation("Re4e6")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
-    valid_moves = rook_movement.get_valid_moves(
-        board.board, final_pos_piece.x, final_pos_piece.y
-    )
+    valid_moves = rook_movement.get_valid_moves(board.board)
 
     expected_moves = [(3, 4), (2, 4), (1, 4), (0, 4)]
     assert valid_moves == expected_moves
@@ -209,9 +207,7 @@ def test_RookMovement_valid_moves_pinned():
     origin_pos, final_pos_piece = interpret_notation("Rd4d5")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
-    valid_moves = rook_movement.get_valid_moves(
-        board.board, final_pos_piece.x, final_pos_piece.y
-    )
+    valid_moves = rook_movement.get_valid_moves(board.board)
 
     expected_moves = []
     assert valid_moves == expected_moves
@@ -225,9 +221,7 @@ def test_RookMovement_valid_moves_capture():
     origin_pos, final_pos_piece = interpret_notation("Re2e1")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
-    valid_moves = rook_movement.get_valid_moves(
-        board.board, final_pos_piece.x, final_pos_piece.y
-    )
+    valid_moves = rook_movement.get_valid_moves(board.board)
 
     expected_moves = [(7, 4), (6, 5), (6, 6), (6, 7), (6, 3), (6, 2), (6, 1), (6, 0)]
     assert valid_moves == expected_moves

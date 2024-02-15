@@ -47,26 +47,36 @@ class KingMovement(PieceMovement):
 
 class RookMovement(PieceMovement):
     def get_valid_moves(
-        self, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
+        self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = new_x, new_y
 
         # Define directions for rook movement: up, down, left, right
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
         for dx, dy in directions:
             dir_x, dir_y = x + dx, y + dy
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=dir_x,
+                new_y=dir_y,
+            )
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
+
+                # check original board
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-
+                    # check using simulated board
                     if UniversalMovementValidation.is_pinned_to_own_king(
-                        piece=self.piece, board=board, new_x=new_x, new_y=new_y
+                        originalPiece=self.piece, board=simulated_board
                     ):
                         break
 
@@ -74,7 +84,7 @@ class RookMovement(PieceMovement):
 
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        board, dir_x, dir_y, color
+                        simulated_board, dir_x, dir_y, color
                     ):
                         break
 
