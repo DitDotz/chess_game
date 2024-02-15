@@ -47,38 +47,38 @@ class KingMovement(PieceMovement):
 
 class RookMovement(PieceMovement):
     def get_valid_moves(
-        self, board: Dict[Tuple[int, int], Piece]
+        self, board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int
     ) -> List[Tuple[int, int]]:
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = None, None  # to edit
+        new_x, new_y = new_x, new_y
 
         # Define directions for rook movement: up, down, left, right
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
+            dir_x, dir_y = x + dx, y + dy
 
-            while UniversalMovementValidation.is_within_board(new_x, new_y):
+            while UniversalMovementValidation.is_within_board(dir_x, dir_y):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
-                    board, new_x, new_y, color
+                    board, dir_x, dir_y, color
                 ):
 
                     if UniversalMovementValidation.is_pinned_to_own_king(
                         piece=self.piece, board=board, new_x=new_x, new_y=new_y
                     ):
-                        valid_moves = []  # No moves possible
-                        return valid_moves
+                        break
 
-                    valid_moves.append((new_x, new_y))
+                    valid_moves.append((dir_x, dir_y))
+
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        board, new_x, new_y, color
+                        board, dir_x, dir_y, color
                     ):
                         break
 
-                    new_x, new_y = new_x + dx, new_y + dy
+                    dir_x, dir_y = dir_x + dx, dir_y + dy
 
                 else:
                     break
@@ -127,27 +127,34 @@ class BishopMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
+        new_x, new_y = None, None  # to edit
 
-        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
-            return valid_moves
-
-        # Define directions for bishop movement: diagonals
+        # Define directions for bishop movement
         directions = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
 
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
+            dir_x, dir_y = x + dx, y + dy
+
             while UniversalMovementValidation.is_within_board(new_x, new_y):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
                 ):
+
+                    if UniversalMovementValidation.is_pinned_to_own_king(
+                        piece=self.piece, board=board, new_x=new_x, new_y=new_y
+                    ):
+                        valid_moves = []  # No moves possible
+                        return valid_moves
+
                     valid_moves.append((new_x, new_y))
                     # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         board, new_x, new_y, color
                     ):
-                        valid_moves.append((new_x, new_y))
                         break
+
                     new_x, new_y = new_x + dx, new_y + dy
+
                 else:
                     break
 
@@ -275,7 +282,7 @@ class UniversalMovementValidation:
 
         # A piece other than the king has moved
         if king_x == simulated_king_x and king_y == simulated_king_y:
-            # Determine the direction vector from the king to the piece being moved
+            # Determine the direction vector from the king to the piece being moved in original position
             dx, dy = BoardUtils.get_direction_vector_from_king(
                 piece=piece, king_x=king_x, king_y=king_y
             )
