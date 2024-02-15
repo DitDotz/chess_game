@@ -12,6 +12,7 @@ from moves import (
     RookMovement,
     BishopMovement,
     QueenMovement,
+    KnightMovement,
 )
 from pieces import Piece, PieceType, Color
 from board import Board
@@ -327,4 +328,33 @@ def test_QueenMovement_valid_moves_no_pins():
         (7, 4),
         (7, 5),
     ]
+    assert valid_moves == expected_moves
+
+
+# Tests are not comprehensive. Need to test edge cases
+
+# Test KnightMovement
+
+
+def test_KnightMovement_valid_moves_no_pins():
+    fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Ne2e1")
+    knight = board.board[origin_pos]
+    knight_movement = KnightMovement(knight)
+    valid_moves = knight_movement.get_valid_moves(board.board)
+    expected_moves = [(7, 6), (7, 2), (5, 6), (5, 2)]
+    assert valid_moves == expected_moves
+
+
+def test_KnightMovement_valid_moves_pinned():
+    fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = interpret_notation("Ne4f6")
+    knight = board.board[origin_pos]
+    knight_movement = KnightMovement(knight)
+    valid_moves = knight_movement.get_valid_moves(board.board)
+    expected_moves = []
     assert valid_moves == expected_moves

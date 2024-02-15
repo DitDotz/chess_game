@@ -104,9 +104,6 @@ class KnightMovement(PieceMovement):
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
 
-        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
-            return valid_moves
-
         directions = [
             (2, 1),
             (2, -1),
@@ -119,13 +116,31 @@ class KnightMovement(PieceMovement):
         ]
 
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
-            if UniversalMovementValidation.is_within_board(
-                new_x, new_y
-            ) and UniversalMovementValidation.is_not_occupied_by_allies(
-                board, new_x, new_y, color
-            ):
-                valid_moves.append((new_x, new_y))
+            dir_x, dir_y = x + dx, y + dy
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=dir_x,
+                new_y=dir_y,
+            )
+
+            while UniversalMovementValidation.is_within_board(dir_x, dir_y):
+
+                # check original board
+                if UniversalMovementValidation.is_not_occupied_by_allies(
+                    board, dir_x, dir_y, color
+                ):
+                    # check using simulated board
+                    if UniversalMovementValidation.is_pinned_to_own_king(
+                        originalPiece=self.piece, board=simulated_board
+                    ):
+                        break
+
+                    valid_moves.append((dir_x, dir_y))
+
+                break
 
         return valid_moves
 
@@ -166,8 +181,8 @@ class BishopMovement(PieceMovement):
                         break
 
                     valid_moves.append((dir_x, dir_y))
-
                     # Stop moving in this direction if occupied by opposing piece
+
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         simulated_board, dir_x, dir_y, color
                     ):
