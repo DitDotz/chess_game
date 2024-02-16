@@ -17,6 +17,8 @@ class Board:
                 board[(x, y)] = Piece(x, y)
         return board
 
+    # Need to implement an exception catch to input another fen
+    # Does not specify whose turn it is, and if castling is still available
     def process_fen(self, fen: str) -> Dict[Tuple[int, int], Piece]:
         """
         Process the FEN string and return a dictionary containing the piece positions.

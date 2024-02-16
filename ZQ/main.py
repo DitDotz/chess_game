@@ -9,11 +9,13 @@ from moves import (
 )
 from copy import deepcopy
 from utility import BoardUtils
-
+from pieces import FEN_MAP
 
 # clean up imports in the final stage
+
+# Infinite loop
 board = Board()
-starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+starting_fen = "8/P7/8/8/8/8/1p6/8"
 board.process_fen(starting_fen)
 print(board)
 
@@ -26,20 +28,13 @@ while not board.king_in_checkmate:
     if board.king_in_checkmate == True:
         break
 
-# notation = "nb1c3"
-# board.move_piece(notation)
-# print(board)
-
-# fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
+# fen = "8/P7/8/8/8/8/1p6/8 w - - 0 1"
 # board = Board()
 # board.process_fen(fen)
-# print(board)
-# origin_pos, final_pos_piece = interpret_notation("Ne2e1")
 
-# knight = board.board[origin_pos]
-# knight_movement = KnightMovement(knight)
-# valid_moves = knight_movement.get_valid_moves(board.board)
-# print(valid_moves)
+# notation = "pb2b1"
+# board.move_piece(notation)
+# print(board)
 
 # check for checkmate
 # checkmate is check + no valid moves available
@@ -50,3 +45,5 @@ while not board.king_in_checkmate:
 # reverse translator from grid to notation, and if invalid move is played, show valid_moves_list
 
 # KingMovement is not implemented
+
+# check_move_is_valid and get_valid_moves should be refactored
