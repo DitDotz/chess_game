@@ -18,11 +18,13 @@ board.process_fen(starting_fen)
 print(board)
 
 # Gameloop
-king_in_checkmate = False
-
-while not king_in_checkmate:
-    board.move_piece()
+while not board.king_in_checkmate:
+    notation = Notation.get_valid_notation(board.board)
+    board.move_piece(notation)
     print(board)
+
+    if board.king_in_checkmate == True:
+        break
 
 # notation = "nb1c3"
 # board.move_piece(notation)

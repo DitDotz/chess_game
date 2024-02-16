@@ -5,9 +5,13 @@ from pieces import *
 class Notation:
 
     @staticmethod
-    def get_notation() -> str:
-        notation = input("Enter notation: ")
-        return notation
+    def get_valid_notation(board: Dict[Tuple[int, int], Piece]) -> str:
+        while True:
+            notation = input("Enter notation: ")
+            if Notation.notation_is_valid(board, notation):
+                return notation
+            else:
+                print("Invalid move. Please try again.")
 
     @staticmethod
     def is_correct_format(notation: str) -> bool:

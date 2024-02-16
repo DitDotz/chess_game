@@ -51,7 +51,7 @@ class BoardUtils:
             return False
 
     @staticmethod
-    def pawn_can_be_promoted(
+    def promote_pawn_if_available(
         piece_to_check: Piece, board: Dict[Tuple[int], Piece]
     ) -> Dict[Tuple[int], Piece]:
 
