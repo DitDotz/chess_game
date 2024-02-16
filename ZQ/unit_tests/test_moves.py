@@ -358,3 +358,40 @@ def test_KnightMovement_valid_moves_pinned():
     valid_moves = knight_movement.get_valid_moves(board.board)
     expected_moves = []
     assert valid_moves == expected_moves
+
+
+# test PawnMovement
+def test_PawnMovement_black_one_square_down():
+    pass
+
+
+def test_PawnMovement_white_one_square_up():
+    pass
+
+
+def test_PawnMovement_is_pinned():
+    pass
+
+
+def test_PawnMovement_black_queen_promotion():
+    pass
+
+
+def test_PawnMovement_white_queen_promotion():
+    pass
+
+
+def test_PawnMovement_white_en_passant():
+    pass
+
+
+def test_PawnMovement_black_en_passant():
+    pass
+
+
+def test_PawnMovement_white_diagonal_capture():
+    pass
+
+
+def test_PawnMovement_black_diagonal_capture():
+    pass

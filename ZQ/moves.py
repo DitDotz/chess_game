@@ -16,6 +16,11 @@ class PieceMovement(ABC):
     ) -> List[Tuple[int, int]]:
         pass
 
+    # def get_special_moves(
+    #     self, board: Dict[Tuple[int, int], Piece]
+    # ) -> List[Tuple[int, int]]:
+    #     return []
+
 
 class KingMovement(PieceMovement):
     def get_valid_moves(
@@ -94,6 +99,12 @@ class RookMovement(PieceMovement):
                     break
 
         return valid_moves
+
+    def get_special_moves(self, board: Dict[Tuple[int], Piece]) -> List[Tuple[int]]:
+        # Implement castling king or queen side if the following conditions are fulfilled
+        # queenside castling: empty squares between king and queen-rook, king and queen-rook has_moved=False and squares king must move through must not be attacked by any piece and cannot be in check
+        # kingside castling: empty squares between king and king-rook, king and queen-rook has_moved=False and squares king must move through must not be attacked by any piece and cannot be in check
+        pass
 
 
 class KnightMovement(PieceMovement):
@@ -256,31 +267,31 @@ class PawnMovement(PieceMovement):
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
 
-        if UniversalMovementValidation.is_pinned_to_own_king(x, y):
-            return valid_moves
-
+        # assumes white is at the bottom of the board
         direction = -1 if color == Color.WHITE else 1
 
-        # Single move forward
+        # Conditions for single move forward
         new_x, new_y = x + direction, y
         if (
             UniversalMovementValidation.is_within_board(new_x, new_y)
-            and not board[new_x][new_y]
+            and board[new_x, new_y].type == PieceType.EMPTY
         ):
             valid_moves.append((new_x, new_y))
 
-            # Double move forward on first move
+            # Double move forward on first move and if there are empty squares in both squares
             if not self.piece.has_moved:
                 new_x, new_y = x + 2 * direction, y
+
                 if (
                     UniversalMovementValidation.is_within_board(new_x, new_y)
-                    and not board[new_x][new_y]
+                    and board[new_x, new_y].type == PieceType.EMPTY
+                    and board[new_x - direction, new_y].type == PieceType.EMPTY
                 ):
                     valid_moves.append((new_x, new_y))
 
-        # Capture diagonally not sure if implementation is correct
-        for dx in [-1, 1]:
-            new_x, new_y = x + direction, y + dx
+        # Conditions for diagonal capture
+        for dy in [-1, 1]:
+            new_x, new_y = x + direction, y + dy
             if UniversalMovementValidation.is_within_board(
                 new_x, new_y
             ) and UniversalMovementValidation.is_occupied_by_opposing(
@@ -288,10 +299,51 @@ class PawnMovement(PieceMovement):
             ):
                 valid_moves.append((new_x, new_y))
 
+        # Conditions for en-passant
+        dy = [1, -1]
+        if self.piece.color == Color.WHITE and self.piece.x == 3:
+            for direction in dy:
+                if (
+                    board[self.piece.x, self.piece.y + dy].type == PieceType.PAWN
+                    and board[self.piece.x, self.piece.y + dy].color == Color.BLACK
+                    and board[self.piece.x, self.piece.y + dy].en_passantable == True
+                ):
+                    valid_moves.append((self.piece.x, self.piece.y + dy))
+
+        elif self.piece.color == Color.BLACK and self.piece.x == 4:
+            if (
+                board[self.piece.x, self.piece.y + dy].type == PieceType.PAWN
+                and board[self.piece.x, self.piece.y + dy].color == Color.WHITE
+                and board[self.piece.x, self.piece.y + dy].en_passantable == True
+            ):
+                valid_moves.append((self.piece.x, self.piece.y + dy))
+
         return valid_moves
 
+    def queen_promotion(self, board: Dict[Tuple[int], Piece]) -> None:
 
-# Unit test successful
+        if (
+            self.piece.type == PieceType.PAWN
+            and self.piece.color == Color.WHITE
+            and self.piece.x == 0
+        ):
+
+            board[(self.piece.x, self.piece.y)] = Piece(
+                x=self.piece.x, y=self.piece.y, type=PieceType.QUEEN, color=Color.WHITE
+            )  # need to return this board to Board class somehow
+
+            # Check if a black pawn reached the 8th rank
+        elif (
+            self.piece.type == PieceType.PAWN
+            and self.piece.color == Color.BLACK
+            and self.piece.x == 7
+        ):
+
+            board[(self.piece.x, self.piece.y)] = Piece(
+                x=self.piece.x, y=self.piece.y, type=PieceType.QUEEN, color=Color.BLACK
+            )  # need to return this board to Board class somehow
+
+
 class UniversalMovementValidation:
     @staticmethod
     def is_within_board(new_x: int, new_y: int) -> bool:

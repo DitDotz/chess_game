@@ -50,6 +50,8 @@ class Piece:
     y: int
     color: Color = Color.NONE
     type: PieceType = PieceType.EMPTY
+    has_moved = False
+    en_passantable = False  # only True for pawn that moved 2 spaces, and returns to False after 1 turn by opposite color
 
     @property
     def repr(self) -> str:

@@ -68,6 +68,14 @@ class Board:
                     )
                     new_x, new_y = updated_piece.x, updated_piece.y
                     self.board[(new_x, new_y)] = updated_piece
+                    updated_piece.has_moved = True
+
+                    # special check for double pawn moves
+                    if (
+                        updated_piece.type == PieceType.PAWN
+                        and abs(original_pos[0] - new_x) == 2
+                    ):
+                        updated_piece.en_passantable = True
                     break
                 else:
                     print("Invalid move. Please try again.")
