@@ -13,6 +13,7 @@ class BoardUtils:
         dy = -1 if king_y > piece.y else (1 if king_y < piece.y else 0)
         return dx, dy
 
+    # Need to refactor this so it returns something that is unit testable
     @staticmethod
     def simulate_piece_move(
         simulated_board: Dict[Tuple[int, int], Piece],

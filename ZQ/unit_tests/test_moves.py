@@ -13,6 +13,7 @@ from moves import (
     BishopMovement,
     QueenMovement,
     KnightMovement,
+    PawnMovement,
 )
 from pieces import Piece, PieceType, Color
 from board import Board
@@ -333,9 +334,8 @@ def test_QueenMovement_valid_moves_no_pins():
 
 # Tests are not comprehensive. Need to test edge cases
 
+
 # Test KnightMovement
-
-
 def test_KnightMovement_valid_moves_no_pins():
     fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
     board = Board()
@@ -361,30 +361,65 @@ def test_KnightMovement_valid_moves_pinned():
 
 
 # test PawnMovement
-def test_PawnMovement_black_one_square_down():
+def test_PawnMovement_black_not_moved_and_capture():
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("pd7d6")
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(2, 3), (3, 3), (2, 4)]
+    assert valid_moves == expected_moves
 
-    pass
 
-
-def test_PawnMovement_white_one_square_up():
-    pass
+def test_PawnMovement_white_not_moved():
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("Pf2f3")
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(5, 5), (4, 5)]
+    assert valid_moves == expected_moves
 
 
 def test_PawnMovement_is_pinned():
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("pg3h2")
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(5, 5), (4, 5)]
+    assert valid_moves == expected_moves
+
+
+def test_PawnMovement_white_en_passantable_after_double_move():
     pass
 
 
-def test_PawnMovement_white_en_passant():
+def test_PawnMovement_black_en_passantable_after_double_move():
     pass
 
 
-def test_PawnMovement_black_en_passant():
+def test_PawnMovement_white_en_passant_capture():
     pass
 
 
-def test_PawnMovement_white_diagonal_capture():
+def test_PawnMovement_black_en_passant_capture():
     pass
 
 
-def test_PawnMovement_black_diagonal_capture():
-    pass
+def test_PawnMovement_capture_along_x_ray_direction():
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("Pc2d3")
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(5, 3)]
+    assert valid_moves == expected_moves

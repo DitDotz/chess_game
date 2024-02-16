@@ -6,6 +6,7 @@ from moves import (
     UniversalMovementValidation,
     QueenMovement,
     KnightMovement,
+    PawnMovement,
 )
 from copy import deepcopy
 from utility import BoardUtils
@@ -14,27 +15,32 @@ from pieces import FEN_MAP
 # clean up imports in the final stage
 
 # Infinite loop
-board = Board()
-starting_fen = "8/P7/8/8/8/8/1p6/8"
-board.process_fen(starting_fen)
-print(board)
-
-# Gameloop
-while not board.king_in_checkmate:
-    notation = Notation.get_valid_notation(board.board)
-    board.move_piece(notation)
-    print(board)
-
-    if board.king_in_checkmate == True:
-        break
-
-# fen = "8/P7/8/8/8/8/1p6/8 w - - 0 1"
 # board = Board()
-# board.process_fen(fen)
-
-# notation = "pb2b1"
-# board.move_piece(notation)
+# starting_fen = "8/P7/8/8/8/8/1p6/8"
+# board.process_fen(starting_fen)
 # print(board)
+
+# # Gameloop
+# while not board.king_in_checkmate:
+#     notation = Notation.get_valid_notation(board.board)
+#     board.move_piece(notation)
+#     print(board)
+
+#     if board.king_in_checkmate == True:
+#         break
+
+
+fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+board = Board()
+board.process_fen(fen)
+print(board)
+origin_pos, final_pos_piece = Notation.interpret_notation("pg4h3")
+pawn = board.board[origin_pos]
+pawn_movement = PawnMovement(pawn)
+valid_moves = pawn_movement.get_valid_moves(board.board)
+print(valid_moves)
+board.move_piece("pg4h3")
+print(board)
 
 # check for checkmate
 # checkmate is check + no valid moves available

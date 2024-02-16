@@ -86,6 +86,7 @@ class Board:
                 break
             else:
                 print("Invalid move. Please try again.")
+                notation = input("Enter notation: ")
 
     def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
         """

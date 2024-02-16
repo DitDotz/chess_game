@@ -267,6 +267,11 @@ class PawnMovement(PieceMovement):
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
 
+        if (self.piece.color == Color.WHITE and self.piece.x != 6) or (
+            self.piece.color == Color.BLACK and self.piece.x != 1
+        ):
+            self.piece.has_moved = True
+
         # assumes white is at the bottom of the board
         direction = -1 if color == Color.WHITE else 1
 

@@ -29,7 +29,6 @@ def test_pawn_can_be_promoted_black_queen():
     notation = "pb2b1"
     board.move_piece(notation)
     expected_piece = Piece(x=7, y=1, color=Color.BLACK, type=PieceType.QUEEN)
-
     assert board.board[(7, 1)] == expected_piece
 
 
