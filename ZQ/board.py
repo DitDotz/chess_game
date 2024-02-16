@@ -1,7 +1,8 @@
 from typing import Dict, Tuple, List
 from pieces import Piece, PieceType, Color, FEN_MAP
-from notation import notation_is_valid, interpret_notation
+from notation import Notation
 from moves import PIECE_MOVE_MAP
+from utility import BoardUtils
 
 
 class Board:
@@ -49,20 +50,17 @@ class Board:
 
         return self.board
 
+    def check_move_is_valid(self, notation: str) -> bool:
+        original_pos, updated_piece = Notation.interpret_notation(notation)
+        valid_moves = self.get_valid_moves(self.board[original_pos])
+        return (updated_piece.x, updated_piece.y) in valid_moves
+
     def move_piece(self) -> None:
-        """
-        Move a piece to a new position on the board.
-        Replace the original position with an empty piece.
-        """
-        notation = input("Enter notation: ")
         while True:
-            if notation_is_valid(self.board, notation):
-                original_pos, updated_piece = interpret_notation(notation)
-                valid_moves = self.get_valid_moves(self.board[original_pos])
-
-                print(valid_moves)
-
-                if (updated_piece.x, updated_piece.y) in valid_moves:
+            notation = Notation.get_notation()
+            if Notation.notation_is_valid(self.board, notation):
+                if self.check_move_is_valid(notation):
+                    original_pos, updated_piece = Notation.interpret_notation(notation)
                     self.board[original_pos] = Piece(
                         original_pos[0], original_pos[1], type=PieceType.EMPTY
                     )
@@ -70,20 +68,25 @@ class Board:
                     self.board[(new_x, new_y)] = updated_piece
                     updated_piece.has_moved = True
 
-                    # special check for double pawn moves
+                    # Special check for double pawn moves
                     if (
                         updated_piece.type == PieceType.PAWN
                         and abs(original_pos[0] - new_x) == 2
                     ):
                         updated_piece.en_passantable = True
+                    else:
+                        updated_piece.en_passantable = False
+
+                    # Special check for pawn promotion to queen
+                    self.board = BoardUtils.pawn_can_be_promoted(
+                        updated_piece, self.board
+                    )
+
                     break
                 else:
                     print("Invalid move. Please try again.")
-                    notation = input("Enter notation: ")
-
             else:
-                print("Please input a valid notation.")
-                notation = input("Enter notation: ")
+                print("Invalid notation. Please try again.")
 
     def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
         """

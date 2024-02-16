@@ -1,5 +1,5 @@
 from board import Board
-from notation import interpret_notation
+from notation import Notation
 from moves import (
     RookMovement,
     BishopMovement,
@@ -17,7 +17,10 @@ starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 board.process_fen(starting_fen)
 print(board)
 
-while True:
+# Gameloop
+king_in_checkmate = False
+
+while not king_in_checkmate:
     board.move_piece()
     print(board)
 
@@ -36,6 +39,12 @@ while True:
 # valid_moves = knight_movement.get_valid_moves(board.board)
 # print(valid_moves)
 
+# check for checkmate
+# checkmate is check + no valid moves available
+# current way of checking for check does not cover situation whereby 2 pieces give checks at once
+
 # check if king is in check, available moves are to move it out of check
 # move king itself or use other piece to block
 # reverse translator from grid to notation, and if invalid move is played, show valid_moves_list
+
+# KingMovement is not implemented

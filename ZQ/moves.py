@@ -192,8 +192,8 @@ class BishopMovement(PieceMovement):
                         break
 
                     valid_moves.append((dir_x, dir_y))
-                    # Stop moving in this direction if occupied by opposing piece
 
+                    # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
                         simulated_board, dir_x, dir_y, color
                     ):
@@ -304,44 +304,26 @@ class PawnMovement(PieceMovement):
         if self.piece.color == Color.WHITE and self.piece.x == 3:
             for direction in dy:
                 if (
-                    board[self.piece.x, self.piece.y + dy].type == PieceType.PAWN
-                    and board[self.piece.x, self.piece.y + dy].color == Color.BLACK
-                    and board[self.piece.x, self.piece.y + dy].en_passantable == True
+                    board[self.piece.x, self.piece.y + direction].type == PieceType.PAWN
+                    and board[self.piece.x, self.piece.y + direction].color
+                    == Color.BLACK
+                    and board[self.piece.x, self.piece.y + direction].en_passantable
+                    == True
                 ):
-                    valid_moves.append((self.piece.x, self.piece.y + dy))
+                    valid_moves.append((self.piece.x, self.piece.y + direction))
 
         elif self.piece.color == Color.BLACK and self.piece.x == 4:
-            if (
-                board[self.piece.x, self.piece.y + dy].type == PieceType.PAWN
-                and board[self.piece.x, self.piece.y + dy].color == Color.WHITE
-                and board[self.piece.x, self.piece.y + dy].en_passantable == True
-            ):
-                valid_moves.append((self.piece.x, self.piece.y + dy))
+            for direction in dy:
+                if (
+                    board[self.piece.x, self.piece.y + direction].type == PieceType.PAWN
+                    and board[self.piece.x, self.piece.y + direction].color
+                    == Color.WHITE
+                    and board[self.piece.x, self.piece.y + direction].en_passantable
+                    == True
+                ):
+                    valid_moves.append((self.piece.x, self.piece.y + direction))
 
         return valid_moves
-
-    def queen_promotion(self, board: Dict[Tuple[int], Piece]) -> None:
-
-        if (
-            self.piece.type == PieceType.PAWN
-            and self.piece.color == Color.WHITE
-            and self.piece.x == 0
-        ):
-
-            board[(self.piece.x, self.piece.y)] = Piece(
-                x=self.piece.x, y=self.piece.y, type=PieceType.QUEEN, color=Color.WHITE
-            )  # need to return this board to Board class somehow
-
-            # Check if a black pawn reached the 8th rank
-        elif (
-            self.piece.type == PieceType.PAWN
-            and self.piece.color == Color.BLACK
-            and self.piece.x == 7
-        ):
-
-            board[(self.piece.x, self.piece.y)] = Piece(
-                x=self.piece.x, y=self.piece.y, type=PieceType.QUEEN, color=Color.BLACK
-            )  # need to return this board to Board class somehow
 
 
 class UniversalMovementValidation:

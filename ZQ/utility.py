@@ -49,3 +49,37 @@ class BoardUtils:
 
         else:
             return False
+
+    @staticmethod
+    def pawn_can_be_promoted(
+        piece_to_check: Piece, board: Dict[Tuple[int], Piece]
+    ) -> Dict[Tuple[int], Piece]:
+
+        if (
+            piece_to_check.type == PieceType.PAWN
+            and piece_to_check.color == Color.WHITE
+            and piece_to_check.x == 0
+        ):
+
+            board[(piece_to_check.x, piece_to_check.y)] = Piece(
+                x=piece_to_check.x,
+                y=piece_to_check.y,
+                type=PieceType.QUEEN,
+                color=Color.WHITE,
+            )
+
+            # Check if a black pawn reached the 8th rank
+        elif (
+            piece_to_check.type == PieceType.PAWN
+            and piece_to_check.color == Color.BLACK
+            and piece_to_check.x == 7
+        ):
+
+            board[(piece_to_check.x, piece_to_check.y)] = Piece(
+                x=piece_to_check.x,
+                y=piece_to_check.y,
+                type=PieceType.QUEEN,
+                color=Color.BLACK,
+            )
+
+        return board

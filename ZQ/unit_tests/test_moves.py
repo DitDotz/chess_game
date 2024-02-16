@@ -16,7 +16,7 @@ from moves import (
 )
 from pieces import Piece, PieceType, Color
 from board import Board
-from notation import interpret_notation
+from notation import Notation
 from utility import BoardUtils
 
 
@@ -90,7 +90,7 @@ def test_is_pinned_to_own_king_diagonal_queen_pin():
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Rd4d1")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Rd4d1")
     piece_to_move = board.board[origin_pos]
     simulated_board = deepcopy(board.board)
     # Simulate the move of the piece on the simulated board in available direction
@@ -118,7 +118,7 @@ def test_is_pinned_to_own_king_diagonal_bishop_pin():
     board = Board()
     print(board)
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = interpret_notation("Rf4f1")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Rf4f1")
     piece_to_move = board.board[origin_pos]
     simulated_board = deepcopy(board.board)
     # Simulate the move of the piece on the simulated board in available direction
@@ -144,7 +144,7 @@ def test_is_pinned_to_own_king_can_move_along_x_ray_direction():
     board = Board()
     print(board)
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = interpret_notation("Re4e6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Re4e6")
     piece_to_move = board.board[origin_pos]
     simulated_board = deepcopy(board.board)
     # Simulate the move of the piece on the simulated board in available direction
@@ -170,7 +170,7 @@ def test_is_pinned_to_own_king_knight_not_involved():
     board = Board()
     print(board)
     board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = interpret_notation("Re2a2")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Re2a2")
     piece_to_move = board.board[origin_pos]
     simulated_board = deepcopy(board.board)
     # Simulate the move of the piece on the simulated board in available direction
@@ -196,7 +196,7 @@ def test_RookMovement_valid_moves_along_x_ray_direction():
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Re4e6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Re4e6")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
     valid_moves = rook_movement.get_valid_moves(board.board)
@@ -210,7 +210,7 @@ def test_RookMovement_valid_moves_pinned():
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Rd4d5")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Rd4d5")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
     valid_moves = rook_movement.get_valid_moves(board.board)
@@ -224,7 +224,7 @@ def test_RookMovement_valid_moves_capture():
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Re2e1")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Re2e1")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
     valid_moves = rook_movement.get_valid_moves(board.board)
@@ -238,7 +238,7 @@ def test_BishopMovement_valid_moves_pinned():
     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Be4d3")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Be4d3")
     bishop = board.board[origin_pos]
     bishop_movement = BishopMovement(bishop)
     valid_moves = bishop_movement.get_valid_moves(board.board)
@@ -252,7 +252,7 @@ def test_BishopMovement_valid_moves_along_x_ray_direction():
     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Bf4g5")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Bf4g5")
     bishop = board.board[origin_pos]
     bishop_movement = BishopMovement(bishop)
     valid_moves = bishop_movement.get_valid_moves(board.board)
@@ -265,7 +265,7 @@ def test_BishopMovement_valid_moves_capture_along_x_ray():
     fen = "4r3/8/1q5b/8/3BBB2/4K3/4B3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Bd4b6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Bd4b6")
     bishop = board.board[origin_pos]
     bishop_movement = BishopMovement(bishop)
     valid_moves = bishop_movement.get_valid_moves(board.board)
@@ -278,7 +278,7 @@ def test_QueenMovement_valid_moves_capture_along_x_ray_diagonal():
     fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Qd4b6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Qd4b6")
     queen = board.board[origin_pos]
     queen_movement = QueenMovement(queen)
     valid_moves = queen_movement.get_valid_moves(board.board)
@@ -292,7 +292,7 @@ def test_QueenMovement_valid_moves_capture_along_x_ray_vertical():
     fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Qe4d3")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Qe4d3")
     queen = board.board[origin_pos]
     queen_movement = QueenMovement(queen)
     valid_moves = queen_movement.get_valid_moves(board.board)
@@ -305,7 +305,7 @@ def test_QueenMovement_valid_moves_no_pins():
     fen = "4r3/8/1q5b/8/3QQQ2/4K3/4Q3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Qe2e1")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Qe2e1")
     queen = board.board[origin_pos]
     queen_movement = QueenMovement(queen)
     valid_moves = queen_movement.get_valid_moves(board.board)
@@ -340,7 +340,7 @@ def test_KnightMovement_valid_moves_no_pins():
     fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Ne2e1")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Ne2e1")
     knight = board.board[origin_pos]
     knight_movement = KnightMovement(knight)
     valid_moves = knight_movement.get_valid_moves(board.board)
@@ -352,7 +352,7 @@ def test_KnightMovement_valid_moves_pinned():
     fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = interpret_notation("Ne4f6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Ne4f6")
     knight = board.board[origin_pos]
     knight_movement = KnightMovement(knight)
     valid_moves = knight_movement.get_valid_moves(board.board)
@@ -362,6 +362,7 @@ def test_KnightMovement_valid_moves_pinned():
 
 # test PawnMovement
 def test_PawnMovement_black_one_square_down():
+
     pass
 
 
@@ -370,14 +371,6 @@ def test_PawnMovement_white_one_square_up():
 
 
 def test_PawnMovement_is_pinned():
-    pass
-
-
-def test_PawnMovement_black_queen_promotion():
-    pass
-
-
-def test_PawnMovement_white_queen_promotion():
     pass
 
 
