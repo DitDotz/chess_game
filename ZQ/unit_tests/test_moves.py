@@ -332,9 +332,6 @@ def test_QueenMovement_valid_moves_no_pins():
     assert valid_moves == expected_moves
 
 
-# Tests are not comprehensive. Need to test edge cases
-
-
 # Test KnightMovement
 def test_KnightMovement_valid_moves_no_pins():
     fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
@@ -389,28 +386,38 @@ def test_PawnMovement_is_pinned():
     fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = Notation.interpret_notation("pg3h2")
+    origin_pos, final_pos_piece = Notation.interpret_notation("pf7e6")
     pawn = board.board[origin_pos]
     pawn_movement = PawnMovement(pawn)
     valid_moves = pawn_movement.get_valid_moves(board.board)
-    expected_moves = [(5, 5), (4, 5)]
+    expected_moves = []
     assert valid_moves == expected_moves
 
 
 def test_PawnMovement_white_en_passantable_after_double_move():
-    pass
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("pg4h3")
+    board.board[(4, 7)].en_passantable = True
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(5, 6), (5, 7)]
+    assert valid_moves == expected_moves
 
 
 def test_PawnMovement_black_en_passantable_after_double_move():
-    pass
-
-
-def test_PawnMovement_white_en_passant_capture():
-    pass
-
-
-def test_PawnMovement_black_en_passant_capture():
-    pass
+    fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
+    board = Board()
+    board.process_fen(fen)
+    origin_pos, final_pos_piece = Notation.interpret_notation("Pb5a6")
+    board.board[(3, 0)].en_passantable = True
+    pawn = board.board[origin_pos]
+    pawn_movement = PawnMovement(pawn)
+    valid_moves = pawn_movement.get_valid_moves(board.board)
+    expected_moves = [(2, 1), (2, 0)]
+    assert valid_moves == expected_moves
 
 
 def test_PawnMovement_capture_along_x_ray_direction():

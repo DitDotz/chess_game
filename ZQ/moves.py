@@ -281,18 +281,39 @@ class PawnMovement(PieceMovement):
             UniversalMovementValidation.is_within_board(new_x, new_y)
             and board[new_x, new_y].type == PieceType.EMPTY
         ):
-            valid_moves.append((new_x, new_y))
+            # Simulate the move on a temporary board
+            simulated_board = deepcopy(board)
+            simulated_board[new_x, new_y] = self.piece
+            simulated_board[x, y] = Piece(
+                x, y, PieceType.EMPTY
+            )  # Update original position
 
-            # Double move forward on first move and if there are empty squares in both squares
-            if not self.piece.has_moved:
-                new_x, new_y = x + 2 * direction, y
+            # Check for pinning to own king
+            if not UniversalMovementValidation.is_pinned_to_own_king(
+                self.piece, simulated_board
+            ):
+                valid_moves.append((new_x, new_y))
 
-                if (
-                    UniversalMovementValidation.is_within_board(new_x, new_y)
-                    and board[new_x, new_y].type == PieceType.EMPTY
-                    and board[new_x - direction, new_y].type == PieceType.EMPTY
-                ):
-                    valid_moves.append((new_x, new_y))
+                # Double move forward on first move and if there are empty squares in both squares
+                if not self.piece.has_moved:
+                    new_x, new_y = x + 2 * direction, y
+
+                    if (
+                        UniversalMovementValidation.is_within_board(new_x, new_y)
+                        and board[new_x, new_y].type == PieceType.EMPTY
+                        and board[new_x - direction, new_y].type == PieceType.EMPTY
+                    ):
+                        # Simulate the move
+                        simulated_board[new_x, new_y] = self.piece
+                        simulated_board[x, y] = Piece(
+                            x, y, PieceType.EMPTY
+                        )  # Update original position
+
+                        # Check for pinning to own king
+                        if not UniversalMovementValidation.is_pinned_to_own_king(
+                            self.piece, simulated_board
+                        ):
+                            valid_moves.append((new_x, new_y))
 
         # Conditions for diagonal capture
         for dy in [-1, 1]:
@@ -302,31 +323,70 @@ class PawnMovement(PieceMovement):
             ) and UniversalMovementValidation.is_occupied_by_opposing(
                 board, new_x, new_y, color
             ):
-                valid_moves.append((new_x, new_y))
+                # Simulate the move
+                simulated_board = deepcopy(board)
+                simulated_board[new_x, new_y] = self.piece
+                simulated_board[x, y] = Piece(
+                    x, y, PieceType.EMPTY
+                )  # Update original position
+
+                # Check for pinning to own king
+                if not UniversalMovementValidation.is_pinned_to_own_king(
+                    self.piece, simulated_board
+                ):
+                    valid_moves.append((new_x, new_y))
 
         # Conditions for en-passant
         dy = [1, -1]
         if self.piece.color == Color.WHITE and self.piece.x == 3:
-            for direction in dy:
+            for y in dy:
                 if (
-                    board[self.piece.x, self.piece.y + direction].type == PieceType.PAWN
-                    and board[self.piece.x, self.piece.y + direction].color
-                    == Color.BLACK
-                    and board[self.piece.x, self.piece.y + direction].en_passantable
-                    == True
+                    (
+                        board[self.piece.x, self.piece.y + y].type == PieceType.PAWN
+                        or board[self.piece.x, self.piece.y - y].type == PieceType.PAWN
+                    )
+                    and board[self.piece.x, self.piece.y + y].color == Color.BLACK
+                    and board[self.piece.x, self.piece.y + y].en_passantable == True
                 ):
-                    valid_moves.append((self.piece.x, self.piece.y + direction))
+                    new_x, new_y = self.piece.x + direction, self.piece.y + y
+                    # Simulate the move
+                    simulated_board = deepcopy(board)
+                    simulated_board[new_x, new_y] = self.piece
+                    simulated_board[x, y] = Piece(
+                        x, y, PieceType.EMPTY
+                    )  # Update original position
+
+                    # Check for pinning to own king
+                    if not UniversalMovementValidation.is_pinned_to_own_king(
+                        self.piece, simulated_board
+                    ):
+
+                        valid_moves.append((new_x, new_y))
 
         elif self.piece.color == Color.BLACK and self.piece.x == 4:
-            for direction in dy:
+            for y in dy:
                 if (
-                    board[self.piece.x, self.piece.y + direction].type == PieceType.PAWN
-                    and board[self.piece.x, self.piece.y + direction].color
-                    == Color.WHITE
-                    and board[self.piece.x, self.piece.y + direction].en_passantable
-                    == True
+                    (
+                        board[self.piece.x, self.piece.y + y].type == PieceType.PAWN
+                        or board[self.piece.x, self.piece.y - y].type == PieceType.PAWN
+                    )
+                    and board[self.piece.x, self.piece.y + y].color == Color.WHITE
+                    and board[self.piece.x, self.piece.y + y].en_passantable == True
                 ):
-                    valid_moves.append((self.piece.x, self.piece.y + direction))
+                    new_x, new_y = self.piece.x + direction, self.piece.y + y
+                    # Simulate the move
+                    simulated_board = deepcopy(board)
+                    simulated_board[new_x, new_y] = self.piece
+                    simulated_board[x, y] = Piece(
+                        x, y, PieceType.EMPTY
+                    )  # Update original position
+
+                    # Check for pinning to own king
+                    if not UniversalMovementValidation.is_pinned_to_own_king(
+                        self.piece, simulated_board
+                    ):
+
+                        valid_moves.append((new_x, new_y))
 
         return valid_moves
 

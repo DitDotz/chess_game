@@ -62,6 +62,7 @@ class Notation:
     def notation_is_valid(board: Dict[Tuple[int, int], Piece], notation: str) -> bool:
         """
         Check if the chess algebraic notation is valid.
+
         """
         return (
             Notation.is_correct_format(notation)

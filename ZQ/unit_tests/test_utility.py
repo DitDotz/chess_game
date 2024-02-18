@@ -22,7 +22,7 @@ from utility import BoardUtils
 
 
 def test_pawn_can_be_promoted_black_queen():
-    fen = "8/P7/8/8/8/8/1p6/8"
+    fen = "4k3/P7/8/8/8/8/1p6/4K3"
     board = Board()
     board.process_fen(fen)
 
@@ -34,7 +34,7 @@ def test_pawn_can_be_promoted_black_queen():
 
 def test_pawn_can_be_promoted_white_queen():
 
-    fen = "8/P7/8/8/8/8/1p6/8"
+    fen = "4k3/P7/8/8/8/8/1p6/4K3"
     board = Board()
     board.process_fen(fen)
     notation = "Pa7a8"

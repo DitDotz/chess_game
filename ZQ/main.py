@@ -29,18 +29,16 @@ from pieces import FEN_MAP
 #     if board.king_in_checkmate == True:
 #         break
 
-
 fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
 board = Board()
 board.process_fen(fen)
-print(board)
-origin_pos, final_pos_piece = Notation.interpret_notation("pg4h3")
+origin_pos, final_pos_piece = Notation.interpret_notation("Pc2d3")
 pawn = board.board[origin_pos]
 pawn_movement = PawnMovement(pawn)
 valid_moves = pawn_movement.get_valid_moves(board.board)
+
 print(valid_moves)
-board.move_piece("pg4h3")
-print(board)
+
 
 # check for checkmate
 # checkmate is check + no valid moves available
