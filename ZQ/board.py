@@ -10,7 +10,7 @@ class Board:
         self.board = self.empty_board()
         self.king_in_checkmate = False
         self.moves_made = 0
-        self.expected_player = Color.WHITE if self.moves_made % 2 == 0 else Color.BLACK
+        self.expected_player = Color.WHITE
 
     def empty_board(self) -> Dict[Tuple[int, int], Piece]:
         board: Dict[Tuple[int, int], Piece] = {}
@@ -55,6 +55,9 @@ class Board:
 
         return self.board
 
+    def set_correct_player_turn(self):
+        self.expected_player = Color.WHITE if self.moves_made % 2 == 0 else Color.BLACK
+
     def check_correct_player_turn(self, notation: str) -> bool:
         input_color = Color.WHITE if notation[0].isupper() else Color.BLACK
         if self.expected_player == input_color:
@@ -74,6 +77,7 @@ class Board:
 
     def move_piece(self, notation: str) -> None:
         while True:
+            self.set_correct_player_turn()
             if self.check_correct_player_turn(notation) and self.check_move_is_valid(
                 notation
             ):
@@ -115,10 +119,6 @@ class Board:
             return piece_movement_instance.get_valid_moves(self.board)
         else:
             print("Piece not recognized for movement")
-
-    def is_king_in_checkmate(self, king: Piece):
-        if king_in_check and get_valid_moves(piece=king):
-            self.king_in_checkmate = True
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
