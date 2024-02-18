@@ -15,30 +15,19 @@ from pieces import FEN_MAP
 # clean up imports in the final stage
 
 # Infinite loop
-# board = Board()
-# starting_fen = "8/P7/8/8/8/8/1p6/8"
-# board.process_fen(starting_fen)
-# print(board)
-
-# # Gameloop
-# while not board.king_in_checkmate:
-#     notation = Notation.get_valid_notation(board.board)
-#     board.move_piece(notation)
-#     print(board)
-
-#     if board.king_in_checkmate == True:
-#         break
-
-fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
 board = Board()
-board.process_fen(fen)
-origin_pos, final_pos_piece = Notation.interpret_notation("Pc2d3")
-pawn = board.board[origin_pos]
-pawn_movement = PawnMovement(pawn)
-valid_moves = pawn_movement.get_valid_moves(board.board)
+starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+board.process_fen(starting_fen)
+print(board)
 
-print(valid_moves)
+# Gameloop
+while not board.king_in_checkmate:
+    notation = Notation.get_valid_notation(board.board)
+    board.move_piece(notation)
+    print(board)
 
+    if board.king_in_checkmate == True:
+        break
 
 # check for checkmate
 # checkmate is check + no valid moves available

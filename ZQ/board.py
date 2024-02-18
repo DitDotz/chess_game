@@ -9,6 +9,8 @@ class Board:
     def __init__(self) -> None:
         self.board = self.empty_board()
         self.king_in_checkmate = False
+        self.moves_made = 0
+        self.expected_player = Color.WHITE if self.moves_made % 2 == 0 else Color.BLACK
 
     def empty_board(self) -> Dict[Tuple[int, int], Piece]:
         board: Dict[Tuple[int, int], Piece] = {}
@@ -53,14 +55,28 @@ class Board:
 
         return self.board
 
+    def check_correct_player_turn(self, notation: str) -> bool:
+        input_color = Color.WHITE if notation[0].isupper() else Color.BLACK
+        if self.expected_player == input_color:
+            return True
+        else:
+            print(f"{self.expected_player} is expected to play")
+            return False
+
     def check_move_is_valid(self, notation: str) -> bool:
         original_pos, updated_piece = Notation.interpret_notation(notation)
         valid_moves = self.get_valid_moves(self.board[original_pos])
-        return (updated_piece.x, updated_piece.y) in valid_moves
+        if (updated_piece.x, updated_piece.y) in valid_moves:
+            return True
+        else:
+            print(f"valid moves include {valid_moves}")
+            return False
 
     def move_piece(self, notation: str) -> None:
         while True:
-            if self.check_move_is_valid(notation):
+            if self.check_correct_player_turn(notation) and self.check_move_is_valid(
+                notation
+            ):
                 original_pos, updated_piece = Notation.interpret_notation(notation)
                 self.board[original_pos] = Piece(
                     original_pos[0], original_pos[1], type=PieceType.EMPTY
@@ -83,6 +99,7 @@ class Board:
                     updated_piece, self.board
                 )
 
+                self.moves_made += 1
                 break
             else:
                 print("Invalid move. Please try again.")
@@ -98,6 +115,10 @@ class Board:
             return piece_movement_instance.get_valid_moves(self.board)
         else:
             print("Piece not recognized for movement")
+
+    def is_king_in_checkmate(self, king: Piece):
+        if king_in_check and get_valid_moves(piece=king):
+            self.king_in_checkmate = True
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
