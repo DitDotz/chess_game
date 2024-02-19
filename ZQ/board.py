@@ -68,7 +68,9 @@ class Board:
 
     def check_move_is_valid(self, notation: str) -> bool:
         original_pos, updated_piece = Notation.interpret_notation(notation)
-        valid_moves = self.get_valid_moves(self.board[original_pos])
+        valid_moves = self.get_valid_moves(
+            self.board[original_pos]
+        )  # this line is the problem.
         if (updated_piece.x, updated_piece.y) in valid_moves:
             return True
         else:

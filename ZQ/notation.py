@@ -20,16 +20,20 @@ class Notation:
         Valid notation format: <piece><origin><destination>
         """
         if len(notation) != 5:
+            print("invalid notation format")
             return False  # Notation length should be exactly 5 characters
 
         if notation[0].lower() not in FEN_MAP.keys():
+            print("invalid notation format")
             return False
 
         # Check if the positions are within the valid chess grid ('a1' to 'h8')
         if notation[1] not in "abcdefgh" or notation[2] not in "12345678":
+            print("invalid notation format")
             return False
 
         if notation[3] not in "abcdefgh" or notation[4] not in "12345678":
+            print("invalid notation format")
             return False
 
         return True
@@ -44,16 +48,13 @@ class Notation:
         piece = notation[0]
         origin_row, origin_col = Notation.convert_to_coordinates(notation[1:3])
         color = Color.WHITE if notation[0].isupper() else Color.BLACK
-
-        if (origin_row, origin_col) not in board:
-            return False  # Original position is empty
-
         original_piece = board[(origin_row, origin_col)]
 
         if (
             original_piece.type != FEN_MAP[piece.lower()]
             or original_piece.color != color
         ):
+            print(f"Piece {piece} does not exist at the specified position")
             return False  # Piece at original position does not match the specified piece in the notation
 
         return True

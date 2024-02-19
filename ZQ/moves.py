@@ -43,7 +43,7 @@ class KingMovement(PieceMovement):
                 and UniversalMovementValidation.is_not_occupied_by_allies(
                     board, new_x, new_y, color
                 )
-                and not UniversalMovementValidation.is_king_in_check_after_king_move()
+                and not UniversalMovementValidation.is_king_in_check()
             ):
                 valid_moves.append((new_x, new_y))
 

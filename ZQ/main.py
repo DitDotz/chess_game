@@ -32,7 +32,7 @@ while not board.king_in_checkmate:
 # check for checkmate
 # checkmate is check + no valid moves available
 # current way of checking for check does not cover situation whereby 2 pieces give checks at once
-
+q
 # check if king is in check, available moves are to move it out of check
 # move king itself or use other piece to block
 # reverse translator from grid to notation, and if invalid move is played, show valid_moves_list
