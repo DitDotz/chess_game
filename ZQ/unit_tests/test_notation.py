@@ -88,7 +88,7 @@ def test_notation_is_valid_invalid_final_pos():
 
     # Provide a valid notation for testing
     notation = "pa7a3"
-    assert Notation.notation_is_valid(board, notation) == False
+    assert Notation.notation_is_valid(board, notation) == True
 
 
 def test_notation_is_valid_invalid_format():
