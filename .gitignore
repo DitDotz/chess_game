@@ -1,2 +1,4 @@
 ZQ/__pycache__/
 .vscode
+.flake8
+.coverage
