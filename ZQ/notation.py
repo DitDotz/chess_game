@@ -1,11 +1,42 @@
-from typing import Tuple, Dict
-from pieces import *
+"""
+Module: notation.py
+
+This module provides utilities for handling chess algebraic notation.
+It includes functions for validating and interpreting chess notation.
+
+Author: [Zhiquan]
+Date: [02/21/2024]
+"""
+
+from typing import Tuple, Dict, List
+from pieces import Piece, FEN_MAP, Color
 
 
 class Notation:
+    """
+    A utility class for handling chess algebraic notation.
+
+    This class provides methods to validate and interpret chess algebraic notation,
+    ensuring that moves made on the board adhere to the rules of the game.
+
+    """
 
     @staticmethod
     def get_valid_notation(board: Dict[Tuple[int, int], Piece]) -> str:
+        """
+        Prompt the user for valid chess algebraic notation.
+
+        This method continuously prompts the user to enter valid chess algebraic notation
+        until a valid move is provided based on the current board state.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chess board.
+
+        Returns:
+            str: A valid chess algebraic notation representing a legal move.
+
+        """
+
         while True:
             notation = input("Enter notation: ")
             if Notation.notation_is_valid(board, notation):
@@ -16,8 +47,15 @@ class Notation:
     @staticmethod
     def is_correct_format(notation: str) -> bool:
         """
-        Check if the chess algebraic notation has the correct format.
-        Valid notation format: <piece><origin><destination>
+        Check if the piece specified in the notation exists in the original position on the board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chess board.
+            notation (str): The chess algebraic notation representing the move.
+
+        Returns:
+            bool: True if the piece exists in the original position, False otherwise.
+
         """
         if len(notation) != 5:
             print("invalid notation format")
@@ -64,7 +102,15 @@ class Notation:
         """
         Check if the chess algebraic notation is valid.
 
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chess board.
+            notation (str): The chess algebraic notation representing the move.
+
+        Returns:
+            bool: True if the notation is valid, False otherwise.
+
         """
+
         return (
             Notation.is_correct_format(notation)
             and Notation.piece_exists_in_original_position(board, notation)
@@ -75,9 +121,14 @@ class Notation:
     def interpret_notation(notation: str) -> List:
         """
         Interpret chess algebraic notation and return the piece type, color, x, and y coordinates.
-        """
-        # Extract the piece type, color, and destination coordinates from the notation
 
+        Args:
+            notation (str): The chess algebraic notation representing the move.
+
+        Returns:
+            List: A list containing the original position and the final piece after the move.
+
+        """
         piece_type = FEN_MAP[(notation[0].lower())]
         piece_color = Color.WHITE if notation[0].isupper() else Color.BLACK
         original_pos = Notation.convert_to_coordinates(notation[1:3])
@@ -92,6 +143,16 @@ class Notation:
     def convert_to_coordinates(chess_notation: str) -> Tuple[int, int]:
         """
         Convert algebraic chess notation to grid coordinates.
+
+        Args:
+            chess_notation (str): The algebraic chess notation to convert.
+
+        Returns:
+            Tuple[int, int]: A tuple containing the row and column coordinates.
+
+        Raises:
+            ValueError: If the input chess notation is invalid.
+
         """
         column_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
 
@@ -107,20 +168,3 @@ class Notation:
         column = column_map[file_char]
 
         return row, column
-
-    # @staticmethod
-    # def check_move_is_valid(board: Dict[Tuple[int, int], Piece], notation: str):
-    #     original_pos, updated_piece = Notation.interpret_notation(notation)
-    #     valid_moves = Board.get_valid_moves(board[original_pos])
-    #     return (updated_piece.x, updated_piece.y) in valid_moves
-
-    # def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
-    #     """
-    #     Get the valid moves for the given piece based on its type.
-    #     """
-    #     pieceMovement_class = PIECE_MOVE_MAP[piece.type]
-    #     piece_movement_instance = pieceMovement_class(piece)
-    #     if piece_movement_instance:
-    #         return piece_movement_instance.get_valid_moves(self.board)
-    #     else:
-    #         print("Piece not recognized for movement")
