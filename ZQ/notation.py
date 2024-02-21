@@ -17,7 +17,7 @@ class Notation:
     A utility class for handling chess algebraic notation.
 
     This class provides methods to validate and interpret chess algebraic notation,
-    ensuring that moves made on the board adhere to the rules of the game.
+    ensuring that the input notation adhere to the rules of the game.
 
     """
 
@@ -34,7 +34,11 @@ class Notation:
 
         Returns:
             str: A valid chess algebraic notation representing a legal move.
-
+        Examples:
+            >>> board = {(6, 4): Piece(x=6, y=4, type=PieceType.PAWN, color=Color.WHITE)}
+            >>> get_valid_notation(board)
+            Enter notation: e2e4
+            'e2e4'
         """
 
         while True:
@@ -54,8 +58,14 @@ class Notation:
             notation (str): The chess algebraic notation representing the move.
 
         Returns:
-            bool: True if the piece exists in the original position, False otherwise.
+            bool: True if the notation provided is valid, False otherwise.
 
+        Examples:
+            >>> board = {(6, 4): Piece(x=6, y=4, type=PieceType.PAWN, color=Color.WHITE)}
+            >>> piece_exists_in_original_position(board, 'Pe2e4')
+            True
+            >>> piece_exists_in_original_position(board, 'Qe2e4')
+            False
         """
         if len(notation) != 5:
             print("invalid notation format")
@@ -82,6 +92,13 @@ class Notation:
     ) -> bool:
         """
         Check if the piece specified in the notation exists in the original position on the board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chess board.
+            notation (str): The chess algebraic notation representing the move.
+
+        Returns:
+            bool: True if the piece exists in the original position specified in the notation, False otherwise.
         """
         piece = notation[0]
         origin_row, origin_col = Notation.convert_to_coordinates(notation[1:3])
@@ -109,6 +126,12 @@ class Notation:
         Returns:
             bool: True if the notation is valid, False otherwise.
 
+        Examples:
+            >>> board = {(6, 4): Piece(x=6, y=4, type=PieceType.PAWN, color=Color.WHITE)}
+            >>> notation_is_valid(board, 'Pe2e4')
+            True
+            >>> notation_is_valid(board, 'Qe2e4')
+            False
         """
 
         return (
@@ -128,6 +151,9 @@ class Notation:
         Returns:
             List: A list containing the original position and the final piece after the move.
 
+        Examples:
+            >>> interpret_notation('Pe2e4')
+            [(6, 4), Piece(x=4, y=4, type=PieceType.PAWN, color=Color.WHITE)]
         """
         piece_type = FEN_MAP[(notation[0].lower())]
         piece_color = Color.WHITE if notation[0].isupper() else Color.BLACK
@@ -152,7 +178,11 @@ class Notation:
 
         Raises:
             ValueError: If the input chess notation is invalid.
-
+        Examples:
+            >>> convert_to_coordinates('a1')
+            (7, 0)
+            >>> convert_to_coordinates('e4')
+            (4, 4)
         """
         column_map = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
 
