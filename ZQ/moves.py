@@ -16,11 +16,6 @@ class PieceMovement(ABC):
     ) -> List[Tuple[int, int]]:
         pass
 
-    # def get_special_moves(
-    #     self, board: Dict[Tuple[int, int], Piece]
-    # ) -> List[Tuple[int, int]]:
-    #     return []
-
 
 class KingMovement(PieceMovement):
     def get_valid_moves(
@@ -29,7 +24,6 @@ class KingMovement(PieceMovement):
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
-        new_x, new_y = None, None  # to edit
 
         # Relative directions the king can move
         directions = [
@@ -37,13 +31,24 @@ class KingMovement(PieceMovement):
         ]
 
         for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
+            dir_x, dir_y = x + dx, y + dy
             if UniversalMovementValidation.is_within_board(
-                new_x, new_y
+                dir_x, dir_y
             ) and UniversalMovementValidation.is_not_occupied_by_allies(
-                board, new_x, new_y, color
+                board, dir_x, dir_y, color
             ):
-                valid_moves.append((new_x, new_y))
+                simulated_board = deepcopy(board)
+                # Simulate the move of the piece on the simulated board in available direction
+                BoardUtils.simulate_piece_move(
+                    simulated_board=simulated_board,
+                    piece=self.piece,
+                    new_x=dir_x,
+                    new_y=dir_y,
+                )
+                if not UniversalMovementValidation.is_king_in_check(
+                    color=color, board=simulated_board
+                ):
+                    valid_moves.append((dir_x, dir_y))
 
         return valid_moves
 
@@ -409,61 +414,6 @@ class UniversalMovementValidation:
             piece_at_position.color != color
             or piece_at_position.type == PieceType.EMPTY
         )
-
-        # board refers to simulated board
-        # @staticmethod
-        # def is_pinned_to_own_king(
-        #     originalPiece: Piece, board: Dict[Tuple[int, int], Piece]
-        # ) -> bool:
-
-        #     # Find position of king in simulated position
-        #     king_x, king_y = KingValidation.find_king_position(board, originalPiece.color)
-
-        #     # Determine the direction vector from the king to the piece being moved in original position
-        #     # if piece moved is the king itself, then check all directions
-        #     dx, dy = BoardUtils.get_direction_vector_from_king(
-        #         piece=originalPiece, king_x=king_x, king_y=king_y
-        #     )
-
-        #     if dx == 0 and dy == 0:
-        #         print("checks for king itself not implemented yet")
-        #         return True
-
-        #     # Iterate from the direction of the king on the simulated board to check for potential pins
-        #     x, y = king_x + dx, king_y + dy
-
-        #     while UniversalMovementValidation.is_within_board(x, y):
-        #         piece_at_position = board.get((x, y))
-
-        #         if UniversalMovementValidation.is_not_occupied_by_allies(
-        #             board, x, y, originalPiece.color
-        #         ):
-
-        #             piece_at_position = board.get((x, y))
-
-        #             # If it returns true, it can either be the opposing color or empty.
-        #             # So your check should be if it is not empty
-
-        #             # if its the opposing color
-        #             if piece_at_position.type != PieceType.EMPTY:
-
-        #                 if BoardUtils.is_in_direct_contact_with_opposing_piece(
-        #                     piece_at_position=piece_at_position, dx=dx, dy=dy
-        #                 ):
-        #                     return True
-
-        #                 else:
-        #                     break
-        #             else:
-        #                 x += dx
-        #                 y += dy
-
-        #         else:
-        #             break
-
-        # Implement for when king itself has moved
-
-        return False
 
     # operated on simulated board (not sure if there is any difference)
     @staticmethod

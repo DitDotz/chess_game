@@ -14,6 +14,7 @@ from moves import (
     QueenMovement,
     KnightMovement,
     PawnMovement,
+    KingMovement,
 )
 from pieces import Piece, PieceType, Color
 from board import Board
@@ -85,6 +86,39 @@ def test_is_occupied_by_opposing():
         UniversalMovementValidation.is_occupied_by_opposing(board, 2, 2, test_color)
         == False
     )
+
+
+def test_KingMovement_within_board_and_valid_directions():
+    fen = "8/8/8/8/8/K7/8/8"
+    board = Board()
+    board.process_fen(fen)
+    king = board.board[5, 0]
+    king_movement = KingMovement(king)
+    valid_moves = king_movement.get_valid_moves(board.board)
+    expected_moves = [(4, 0), (4, 1), (5, 1), (6, 0), (6, 1)]
+    assert valid_moves == expected_moves
+
+
+def test_KingMovement_cannot_walk_into_check():
+    fen = "2r1r3/8/8/8/3K4/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    king = board.board[4, 3]
+    king_movement = KingMovement(king)
+    valid_moves = king_movement.get_valid_moves(board.board)
+    expected_moves = [(3, 3), (5, 3)]
+    assert valid_moves == expected_moves
+
+
+def test_KingMovement_has_no_valid_moves():
+    fen = "2rrr3/8/8/8/3K4/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    king = board.board[4, 3]
+    king_movement = KingMovement(king)
+    valid_moves = king_movement.get_valid_moves(board.board)
+    expected_moves = []
+    assert valid_moves == expected_moves
 
 
 # Test RookMovement
