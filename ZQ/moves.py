@@ -66,15 +66,8 @@ class RookMovement(PieceMovement):
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
         for dx, dy in directions:
+
             dir_x, dir_y = x + dx, y + dy
-            simulated_board = deepcopy(board)
-            # Simulate the move of the piece on the simulated board in available direction
-            BoardUtils.simulate_piece_move(
-                simulated_board=simulated_board,
-                piece=self.piece,
-                new_x=dir_x,
-                new_y=dir_y,
-            )
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
 
@@ -82,17 +75,10 @@ class RookMovement(PieceMovement):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-                    # check using simulated board
-                    if UniversalMovementValidation.is_king_in_check(
-                        color=color, board=simulated_board
-                    ):
-                        break
-
                     valid_moves.append((dir_x, dir_y))
 
-                    # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        simulated_board, dir_x, dir_y, color
+                        board, dir_x, dir_y, color
                     ):
                         break
 
@@ -101,7 +87,24 @@ class RookMovement(PieceMovement):
                 else:
                     break
 
-        return valid_moves
+        validated_moves = []
+        for move in valid_moves:
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=move[0],
+                new_y=move[1],
+            )
+
+            # check using simulated board
+            if not UniversalMovementValidation.is_king_in_check(
+                color=color, board=simulated_board
+            ):
+                validated_moves.append(move)
+
+        return validated_moves
 
     def get_special_moves(self, board: Dict[Tuple[int], Piece]) -> List[Tuple[int]]:
         # Implement castling king or queen side if the following conditions are fulfilled
