@@ -87,110 +87,6 @@ def test_is_occupied_by_opposing():
     )
 
 
-def test_is_pinned_to_own_king_diagonal_queen_pin():
-    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
-    board = Board()
-    board.process_fen(fen)
-    origin_pos, final_pos_piece = Notation.interpret_notation("Rd4d1")
-    piece_to_move = board.board[origin_pos]
-    simulated_board = deepcopy(board.board)
-    # Simulate the move of the piece on the simulated board in available direction
-    BoardUtils.simulate_piece_move(
-        simulated_board=simulated_board,
-        piece=piece_to_move,
-        new_x=final_pos_piece.x,
-        new_y=final_pos_piece.y,
-    )
-
-    assert (
-        UniversalMovementValidation.is_pinned_to_own_king(
-            originalPiece=piece_to_move,
-            board=simulated_board,
-        )
-        == True
-    )
-
-
-def test_is_pinned_to_own_king_diagonal_bishop_pin():
-    # piece will be moved arbitrarily without consideration of valid moves
-    # this means it will likely break once valid moves are incorporated
-    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
-
-    board = Board()
-    print(board)
-    board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = Notation.interpret_notation("Rf4f1")
-    piece_to_move = board.board[origin_pos]
-    simulated_board = deepcopy(board.board)
-    # Simulate the move of the piece on the simulated board in available direction
-    BoardUtils.simulate_piece_move(
-        simulated_board=simulated_board,
-        piece=piece_to_move,
-        new_x=final_pos_piece.x,
-        new_y=final_pos_piece.y,
-    )
-
-    assert (
-        UniversalMovementValidation.is_pinned_to_own_king(
-            originalPiece=piece_to_move,
-            board=simulated_board,
-        )
-        == True
-    )
-
-
-def test_is_pinned_to_own_king_can_move_along_x_ray_direction():
-    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
-
-    board = Board()
-    print(board)
-    board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = Notation.interpret_notation("Re4e6")
-    piece_to_move = board.board[origin_pos]
-    simulated_board = deepcopy(board.board)
-    # Simulate the move of the piece on the simulated board in available direction
-    BoardUtils.simulate_piece_move(
-        simulated_board=simulated_board,
-        piece=piece_to_move,
-        new_x=final_pos_piece.x,
-        new_y=final_pos_piece.y,
-    )
-
-    assert (
-        UniversalMovementValidation.is_pinned_to_own_king(
-            originalPiece=piece_to_move,
-            board=simulated_board,
-        )
-        == False
-    )
-
-
-def test_is_pinned_to_own_king_knight_not_involved():
-    fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
-
-    board = Board()
-    print(board)
-    board.process_fen("4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3")
-    origin_pos, final_pos_piece = Notation.interpret_notation("Re2a2")
-    piece_to_move = board.board[origin_pos]
-    simulated_board = deepcopy(board.board)
-    # Simulate the move of the piece on the simulated board in available direction
-    BoardUtils.simulate_piece_move(
-        simulated_board=simulated_board,
-        piece=piece_to_move,
-        new_x=final_pos_piece.x,
-        new_y=final_pos_piece.y,
-    )
-
-    assert (
-        UniversalMovementValidation.is_pinned_to_own_king(
-            originalPiece=piece_to_move,
-            board=simulated_board,
-        )
-        == False
-    )
-
-
 # Test RookMovement
 def test_RookMovement_valid_moves_along_x_ray_direction():
 
@@ -430,3 +326,159 @@ def test_PawnMovement_capture_along_x_ray_direction():
     valid_moves = pawn_movement.get_valid_moves(board.board)
     expected_moves = [(5, 3)]
     assert valid_moves == expected_moves
+
+
+def test_is_king_in_check_black_pawn_on_left():
+    fen = "8/8/8/8/8/8/2p5/3K4"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.WHITE, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_black_pawn_on_right():
+    fen = "8/8/8/8/8/8/3p4/2K5"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.WHITE, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_white_pawn_on_left():
+    fen = "2k5/1P6/8/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_white_pawn_on_right():
+    fen = "2k5/3P4/8/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_rook_vertical():
+    fen = "2k5/8/8/8/8/8/8/2R5"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_rook_horizontal():
+    fen = "2k4R/8/8/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_bishop_diagonal_1():
+    fen = "2k5/8/4B3/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_bishop_diagonal_2():
+    fen = "2k5/8/B7/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_queen_vertical():
+    fen = "2k5/8/8/8/8/8/8/2Q5"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_queen_horizontal():
+    fen = "2k4Q/8/8/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_queen_diagonal_1():
+    fen = "2k5/8/4Q3/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_queen_diagonal_2():
+    fen = "2k5/8/Q7/8/8/8/8/8"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.BLACK, board=board.board
+        )
+        == True
+    )
+
+
+def test_is_king_in_check_no_checks():
+    fen = "1r6/8/8/5b2/8/8/PPP5/1K6"
+    board = Board()
+    board.process_fen(fen)
+    assert (
+        UniversalMovementValidation.is_king_in_check(
+            color=Color.WHITE, board=board.board
+        )
+        == False
+    )
