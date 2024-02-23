@@ -1,7 +1,7 @@
 from typing import Dict, Tuple, List
 from pieces import Piece, PieceType, Color, FEN_MAP
 from notation import Notation
-from moves import PIECE_MOVE_MAP
+from moves import PIECE_MOVE_MAP, UniversalMovementValidation
 from utility import BoardUtils
 
 
@@ -120,6 +120,25 @@ class Board:
             return piece_movement_instance.get_valid_moves(self.board)
         else:
             print("Piece not recognized for movement")
+
+    def get_all_valid_moves(
+        self, color: Color, board: Dict[Tuple[int, int], Piece]
+    ) -> List[Tuple[int, int]]:
+        all_valid_moves = []
+        for position, piece in board.items():
+            if piece.color == color:
+                piece_valid_moves = self.get_valid_moves(piece)
+                all_valid_moves.extend(piece_valid_moves)
+        return all_valid_moves
+
+    def is_king_in_checkmate(
+        self, color: Color, board: Dict[Tuple[int, int], Piece]
+    ) -> None:
+        if (
+            UniversalMovementValidation.is_king_in_check(color, board)
+            and self.get_all_valid_moves == []
+        ):
+            self.king_in_checkmate = True
 
     def __repr__(self) -> str:
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels

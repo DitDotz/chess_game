@@ -127,7 +127,7 @@ def test_RookMovement_valid_moves_along_x_ray_direction():
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
     board = Board()
     board.process_fen(fen)
-    origin_pos, final_pos_piece = Notation.interpret_notation("Re4e6")
+    origin_pos, final_pos_piece = Notation.interpret_notation("Re4e8")
     rook = board.board[origin_pos]
     rook_movement = RookMovement(rook)
     valid_moves = rook_movement.get_valid_moves(board.board)

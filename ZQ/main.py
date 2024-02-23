@@ -11,7 +11,7 @@ from moves import (
 )
 from copy import deepcopy
 from utility import BoardUtils
-from pieces import FEN_MAP
+from pieces import FEN_MAP, Color
 
 # clean up imports in the final stage
 # if __name__ == "__main__":
@@ -30,15 +30,16 @@ from pieces import FEN_MAP
 #     if board.king_in_checkmate == True:
 #         break
 
-
-fen = "2rrr3/8/8/8/3K4/8/8/8"
 board = Board()
+fen = "4r3/8/8/8/q7/8/R2P4/3K4"
 board.process_fen(fen)
-king = board.board[4, 3]
-king_movement = KingMovement(king)
-valid_moves = king_movement.get_valid_moves(board.board)
+# valid_moves = board.get_all_valid_moves(color=Color.WHITE, board=board.board)
+valid_moves = RookMovement(piece=board.board[(6, 0)]).get_valid_moves(board=board.board)
+print(board)
 print(valid_moves)
 
+# rook should block or capture the queen
+# test capture pinning piece
 
 # check for checkmate
 # checkmate is check + no valid moves available

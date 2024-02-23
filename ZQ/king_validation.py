@@ -25,14 +25,6 @@ class KingValidation:
 
         return king_position
 
-    @staticmethod
-    def king_in_check() -> bool:
-        pass
-
-    @staticmethod
-    def king_in_checkmate() -> bool:
-        pass
-
 
 class KingNotFound(Exception):
     """Exception raised when the king of a specified color is not found on the board."""
