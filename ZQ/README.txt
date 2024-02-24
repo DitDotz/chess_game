@@ -1,3 +1,1 @@
-Don't jump the gun
-
-implementing king check rules
+Terminal-based chess game
