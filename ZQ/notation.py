@@ -155,7 +155,14 @@ class Notation:
             >>> interpret_notation('Pe2e4')
             [(6, 4), Piece(x=4, y=4, type=PieceType.PAWN, color=Color.WHITE)]
         """
-        piece_type = FEN_MAP[(notation[0].lower())]
+        while True:
+            try:
+                piece_type = FEN_MAP[notation[0].lower()]
+                break  # Break out of the loop if the notation is valid
+            except KeyError:
+                print("Invalid piece notation. Please enter a valid notation.")
+                notation = input("Enter a valid piece notation: ")
+
         piece_color = Color.WHITE if notation[0].isupper() else Color.BLACK
         original_pos = Notation.convert_to_coordinates(notation[1:3])
         final_pos = Notation.convert_to_coordinates(notation[3:5])
@@ -198,3 +205,5 @@ class Notation:
         column = column_map[file_char]
 
         return row, column
+
+    # convert to notation from coordinates

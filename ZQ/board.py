@@ -73,7 +73,9 @@ class Board:
         if (updated_piece.x, updated_piece.y) in valid_moves:
             return True
         else:
-            print(f"valid moves include {valid_moves}")
+            print(
+                f"valid moves include {self.get_all_valid_moves(self.expected_player, self.board)}"
+            )
             return False
 
     def move_piece(self, notation: str) -> None:

@@ -28,9 +28,10 @@ while not board.king_in_checkmate:
     print(board)
 
     if board.king_in_checkmate == True:
+        print(f"{board.expected_player} is in checkmate")
         break
 
 
 # reverse translator from grid to notation, and if invalid move is played, show valid_moves_list
-
+# implement castling
 # check_move_is_valid and get_valid_moves should be refactored
