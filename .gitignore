@@ -1,6 +1,10 @@
-
+# custom
 ZQ/__pycache__/
 .vscode
+ZQ/sphinx_build
+ZQ/sphinx_source
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -73,6 +77,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+sphinx_source
 
 # PyBuilder
 .pybuilder/
