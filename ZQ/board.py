@@ -131,11 +131,11 @@ class Board:
                 all_valid_moves.extend(piece_valid_moves)
         return all_valid_moves
 
-    def check_is_king_in_checkmate(
-        self, color: Color, board: Dict[Tuple[int, int], Piece]
-    ) -> None:
+    def check_is_king_in_checkmate(self) -> None:
         if (
-            UniversalMovementValidation.is_king_in_check(color, board)
+            UniversalMovementValidation.is_king_in_check(
+                self.expected_player, self.board
+            )
             and self.get_all_valid_moves == []
         ):
             self.king_in_checkmate = True
