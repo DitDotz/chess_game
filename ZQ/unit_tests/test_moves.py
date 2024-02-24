@@ -136,6 +136,18 @@ def test_RookMovement_valid_moves_along_x_ray_direction():
     assert valid_moves == expected_moves
 
 
+def test_RookMovement_can_capture_piece_giving_check():
+
+    board = Board()
+    fen = "4r3/8/8/8/q7/8/R2P4/3K4"
+    board.process_fen(fen)
+    valid_moves = RookMovement(piece=board.board[(6, 0)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(4, 0), (6, 2)]
+    assert valid_moves == expected_moves
+
+
 def test_RookMovement_valid_moves_pinned():
 
     fen = "4r3/8/1q5b/8/3RRR2/4K3/4R3/4n3"
@@ -161,6 +173,18 @@ def test_RookMovement_valid_moves_capture():
     valid_moves = rook_movement.get_valid_moves(board.board)
 
     expected_moves = [(7, 4), (6, 5), (6, 6), (6, 7), (6, 3), (6, 2), (6, 1), (6, 0)]
+    assert valid_moves == expected_moves
+
+
+def test_BishopMovement_can_capture_piece_giving_check():
+
+    board = Board()
+    fen = "4r3/8/2B5/8/q7/8/3P4/3K4"
+    board.process_fen(fen)
+    valid_moves = BishopMovement(piece=board.board[(2, 2)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(4, 0)]
     assert valid_moves == expected_moves
 
 
@@ -202,6 +226,18 @@ def test_BishopMovement_valid_moves_capture_along_x_ray():
     valid_moves = bishop_movement.get_valid_moves(board.board)
 
     expected_moves = [(3, 2), (2, 1)]
+    assert valid_moves == expected_moves
+
+
+def test_QueenMovement_can_capture_piece_giving_check():
+
+    board = Board()
+    fen = "4r3/8/2Q5/8/q7/8/3P4/3K4"
+    board.process_fen(fen)
+    valid_moves = QueenMovement(piece=board.board[(2, 2)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(4, 0), (6, 2)]
     assert valid_moves == expected_moves
 
 
@@ -262,6 +298,18 @@ def test_QueenMovement_valid_moves_no_pins():
     assert valid_moves == expected_moves
 
 
+def test_KnightMovement_can_capture_piece_giving_check():
+
+    board = Board()
+    fen = "4r3/8/8/2N5/q7/8/3P4/3K4"
+    board.process_fen(fen)
+    valid_moves = KnightMovement(piece=board.board[(3, 2)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(5, 1), (4, 0)]
+    assert valid_moves == expected_moves
+
+
 # Test KnightMovement
 def test_KnightMovement_valid_moves_no_pins():
     fen = "4r3/8/1q5b/8/3NNN2/4K3/4N3/4n3"
@@ -288,6 +336,30 @@ def test_KnightMovement_valid_moves_pinned():
 
 
 # test PawnMovement
+def test_PawnMovement_can_capture_piece_giving_check_white():
+
+    board = Board()
+    fen = "4r3/8/8/8/8/5q2/3P2P1/3K4"
+    board.process_fen(fen)
+    valid_moves = PawnMovement(piece=board.board[(6, 6)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(5, 5)]
+    assert valid_moves == expected_moves
+
+
+def test_PawnMovement_can_capture_piece_giving_check_black():
+
+    board = Board()
+    fen = "3kr3/2p5/3Q4/8/8/8/8/8"
+    board.process_fen(fen)
+    valid_moves = PawnMovement(piece=board.board[(1, 2)]).get_valid_moves(
+        board=board.board
+    )
+    expected_moves = [(2, 3)]
+    assert valid_moves == expected_moves
+
+
 def test_PawnMovement_black_not_moved_and_capture():
     fen = "4k3/3p1p2/4P3/pP5B/6pP/3b4/2P2P2/1K6"
     board = Board()

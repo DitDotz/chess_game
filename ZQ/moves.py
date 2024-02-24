@@ -175,15 +175,8 @@ class BishopMovement(PieceMovement):
         directions = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
 
         for dx, dy in directions:
+
             dir_x, dir_y = x + dx, y + dy
-            simulated_board = deepcopy(board)
-            # Simulate the move of the piece on the simulated board in available direction
-            BoardUtils.simulate_piece_move(
-                simulated_board=simulated_board,
-                piece=self.piece,
-                new_x=dir_x,
-                new_y=dir_y,
-            )
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
 
@@ -191,17 +184,10 @@ class BishopMovement(PieceMovement):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-                    # check using simulated board
-                    if UniversalMovementValidation.is_king_in_check(
-                        color=color, board=simulated_board
-                    ):
-                        break
-
                     valid_moves.append((dir_x, dir_y))
 
-                    # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        simulated_board, dir_x, dir_y, color
+                        board, dir_x, dir_y, color
                     ):
                         break
 
@@ -210,7 +196,24 @@ class BishopMovement(PieceMovement):
                 else:
                     break
 
-        return valid_moves
+        validated_moves = []
+        for move in valid_moves:
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=move[0],
+                new_y=move[1],
+            )
+
+            # check using simulated board
+            if not UniversalMovementValidation.is_king_in_check(
+                color=color, board=simulated_board
+            ):
+                validated_moves.append(move)
+
+        return validated_moves
 
 
 class QueenMovement(PieceMovement):
@@ -227,15 +230,8 @@ class QueenMovement(PieceMovement):
             (dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if (dx, dy) != (0, 0)
         ]
         for dx, dy in directions:
+
             dir_x, dir_y = x + dx, y + dy
-            simulated_board = deepcopy(board)
-            # Simulate the move of the piece on the simulated board in available direction
-            BoardUtils.simulate_piece_move(
-                simulated_board=simulated_board,
-                piece=self.piece,
-                new_x=dir_x,
-                new_y=dir_y,
-            )
 
             while UniversalMovementValidation.is_within_board(dir_x, dir_y):
 
@@ -243,17 +239,10 @@ class QueenMovement(PieceMovement):
                 if UniversalMovementValidation.is_not_occupied_by_allies(
                     board, dir_x, dir_y, color
                 ):
-                    # check using simulated board
-                    if UniversalMovementValidation.is_king_in_check(
-                        color=color, board=simulated_board
-                    ):
-                        break
-
                     valid_moves.append((dir_x, dir_y))
 
-                    # Stop moving in this direction if occupied by opposing piece
                     if UniversalMovementValidation.is_occupied_by_opposing(
-                        simulated_board, dir_x, dir_y, color
+                        board, dir_x, dir_y, color
                     ):
                         break
 
@@ -262,7 +251,24 @@ class QueenMovement(PieceMovement):
                 else:
                     break
 
-        return valid_moves
+        validated_moves = []
+        for move in valid_moves:
+            simulated_board = deepcopy(board)
+            # Simulate the move of the piece on the simulated board in available direction
+            BoardUtils.simulate_piece_move(
+                simulated_board=simulated_board,
+                piece=self.piece,
+                new_x=move[0],
+                new_y=move[1],
+            )
+
+            # check using simulated board
+            if not UniversalMovementValidation.is_king_in_check(
+                color=color, board=simulated_board
+            ):
+                validated_moves.append(move)
+
+        return validated_moves
 
 
 class PawnMovement(PieceMovement):
