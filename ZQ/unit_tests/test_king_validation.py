@@ -4,8 +4,6 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-
-from typing import Dict, Tuple
 from pieces import Piece, Color, PieceType
 from king_validation import KingValidation, KingNotFound
 

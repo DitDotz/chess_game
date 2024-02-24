@@ -13,7 +13,7 @@ if __name__ == "__main__":
         board.move_piece(notation)
         print(board)
 
-        if board.king_in_checkmate == True:
+        if board.king_in_checkmate:
             print(f"{board.expected_player} is in checkmate")
             break
 

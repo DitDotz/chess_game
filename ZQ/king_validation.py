@@ -1,5 +1,4 @@
-import traceback
-from typing import List, Tuple, Dict
+from typing import Tuple, Dict
 
 from pieces import Piece, Color, PieceType
 

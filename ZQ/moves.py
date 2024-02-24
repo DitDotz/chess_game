@@ -154,12 +154,6 @@ class RookMovement(PieceMovement):
 
         return validated_moves
 
-    def get_special_moves(self, board: Dict[Tuple[int], Piece]) -> List[Tuple[int]]:
-        # Implement castling king or queen side if the following conditions are fulfilled
-        # queenside castling: empty squares between king and queen-rook, king and queen-rook has_moved=False and squares king must move through must not be attacked by any piece and cannot be in check
-        # kingside castling: empty squares between king and king-rook, king and queen-rook has_moved=False and squares king must move through must not be attacked by any piece and cannot be in check
-        pass
-
 
 class KnightMovement(PieceMovement):
     """
@@ -468,7 +462,7 @@ class PawnMovement(PieceMovement):
                         or board[self.piece.x, self.piece.y - y].type == PieceType.PAWN
                     )
                     and board[self.piece.x, self.piece.y + y].color == Color.BLACK
-                    and board[self.piece.x, self.piece.y + y].en_passantable == True
+                    and board[self.piece.x, self.piece.y + y].en_passantable
                 ):
                     new_x, new_y = self.piece.x + direction, self.piece.y + y
                     # Simulate the move
@@ -493,7 +487,7 @@ class PawnMovement(PieceMovement):
                         or board[self.piece.x, self.piece.y - y].type == PieceType.PAWN
                     )
                     and board[self.piece.x, self.piece.y + y].color == Color.WHITE
-                    and board[self.piece.x, self.piece.y + y].en_passantable == True
+                    and board[self.piece.x, self.piece.y + y].en_passantable
                 ):
                     new_x, new_y = self.piece.x + direction, self.piece.y + y
                     # Simulate the move
