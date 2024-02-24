@@ -1,5 +1,5 @@
 # custom
-ZQ/__pycache__/
+__pycache__/
 .vscode
 ZQ/sphinx_build
 ZQ/sphinx_source
