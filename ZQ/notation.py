@@ -1,13 +1,3 @@
-"""
-Module: notation.py
-
-This module provides utilities for handling chess algebraic notation.
-It includes functions for validating and interpreting chess notation.
-
-Author: [Zhiquan]
-Date: [02/21/2024]
-"""
-
 from typing import Tuple, Dict, List
 from pieces import Piece, FEN_MAP, Color
 

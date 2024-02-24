@@ -7,20 +7,53 @@ from utility import BoardUtils
 
 
 class PieceMovement(ABC):
+    """
+    Abstract class for defining movement rules of chess pieces.
+
+    Attributes:
+        piece (Piece): The piece for which movement rules are defined.
+    """
+
     def __init__(self, piece: Piece):
+        """Initialize the PieceMovement object."""
         self.piece = piece
 
     @abstractmethod
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the piece on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the piece.
+        """
         pass
 
 
 class KingMovement(PieceMovement):
+    """
+    Defines movement rules for the king piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the king on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the king.
+        """
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -54,9 +87,24 @@ class KingMovement(PieceMovement):
 
 
 class RookMovement(PieceMovement):
+    """
+    Defines movement rules for the rook piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the rook on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the rook.
+        """
 
         valid_moves = []
         x, y = self.piece.x, self.piece.y
@@ -114,9 +162,25 @@ class RookMovement(PieceMovement):
 
 
 class KnightMovement(PieceMovement):
+    """
+    Defines movement rules for the knight piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the knight on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the knight.
+        """
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -163,9 +227,24 @@ class KnightMovement(PieceMovement):
 
 
 class BishopMovement(PieceMovement):
+    """
+    Defines movement rules for the bishop piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the bishop on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the bishop.
+        """
 
         valid_moves = []
         x, y = self.piece.x, self.piece.y
@@ -217,9 +296,24 @@ class BishopMovement(PieceMovement):
 
 
 class QueenMovement(PieceMovement):
+    """
+    Defines movement rules for the queen piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the queen on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the queen.
+        """
 
         valid_moves = []
         x, y = self.piece.x, self.piece.y
@@ -272,9 +366,25 @@ class QueenMovement(PieceMovement):
 
 
 class PawnMovement(PieceMovement):
+    """
+    Defines movement rules for the pawn piece.
+
+    Inherits from PieceMovement.
+    """
+
     def get_valid_moves(
         self, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get the valid moves for the pawn on the given board.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the queen.
+        """
+
         valid_moves = []
         x, y = self.piece.x, self.piece.y
         color = self.piece.color
@@ -404,8 +514,22 @@ class PawnMovement(PieceMovement):
 
 
 class UniversalMovementValidation:
+    """
+    Utility class for validating movement rules universally applicable to chess pieces.
+    """
+
     @staticmethod
     def is_within_board(new_x: int, new_y: int) -> bool:
+        """
+        Check if the given coordinates are within the boundaries of the chessboard.
+
+        Args:
+            x (int): The x-coordinate.
+            y (int): The y-coordinate.
+
+        Returns:
+            bool: True if the coordinates are within the board, False otherwise.
+        """
         return 0 <= new_x < 8 and 0 <= new_y < 8
 
     # Used on original board
@@ -414,9 +538,18 @@ class UniversalMovementValidation:
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
     ):
         """
-        Returns true if its empty squares or opposing color piece
-        Implementation is taking movement into consideration only
+        Check if the target position is not occupied by a piece of the same color.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+            x (int): The x-coordinate of the target position.
+            y (int): The y-coordinate of the target position.
+            color (Color): The color of the piece attempting to move.
+
+        Returns:
+            bool: True if the target position is not occupied by allies, False otherwise.
         """
+
         piece_at_position = board[(new_x, new_y)]
 
         return (
@@ -430,7 +563,16 @@ class UniversalMovementValidation:
         board: Dict[Tuple[int, int], Piece], new_x: int, new_y: int, color: Color
     ) -> bool:
         """
-        Check if the square at the given coordinates is occupied by an opposing piece.
+        Check if the target position is occupied by a piece of the opposing color.
+
+        Args:
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+            x (int): The x-coordinate of the target position.
+            y (int): The y-coordinate of the target position.
+            color (Color): The color of the piece attempting to move.
+
+        Returns:
+            bool: True if the target position is occupied by an opposing piece, False otherwise.
         """
         piece_at_position = board.get((new_x, new_y))
 
@@ -443,6 +585,16 @@ class UniversalMovementValidation:
 
     @staticmethod
     def is_king_in_check(color: Color, board: Dict[Tuple[int, int], Piece]) -> bool:
+        """
+        Check if the king of the given color is in check on the current board.
+
+        Args:
+            color (Color): The color of the king.
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            bool: True if the king is in check, False otherwise.
+        """
 
         # Find position of king in simulated position
         king_x, king_y = KingValidation.find_king_position(board, color)

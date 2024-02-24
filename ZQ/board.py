@@ -6,13 +6,34 @@ from utility import BoardUtils
 
 
 class Board:
+    """
+    Represents the chessboard.
+
+    Attributes:
+        board (Dict[Tuple[int, int], Piece]): A dictionary representing the positions of pieces on the board.
+        king_in_checkmate (bool): Indicates whether the game is in a checkmate state.
+        moves_made (int): The number of moves made in the game.
+        expected_player (Color): The color of the player expected to make the next move.
+    """
+
     def __init__(self) -> None:
+        """
+        Initialize the Board object.
+        """
+
         self.board = self.empty_board()
         self.king_in_checkmate = False
         self.moves_made = 0
         self.expected_player = Color.WHITE
 
     def empty_board(self) -> Dict[Tuple[int, int], Piece]:
+        """
+        Create an empty chessboard.
+
+        Returns:
+            Dict[Tuple[int, int], Piece]: A dictionary representing an empty chessboard.
+        """
+
         board: Dict[Tuple[int, int], Piece] = {}
         for x in range(8):
             for y in range(8):
@@ -21,7 +42,14 @@ class Board:
 
     def process_fen(self, fen: str) -> Dict[Tuple[int, int], Piece]:
         """
-        Process the FEN string and return a dictionary containing the piece positions.
+        Process the FEN string and initialize the board with the specified piece positions.
+
+        Args:
+            fen (str): The FEN string representing the piece positions.
+
+        Returns:
+            Dict[Tuple[int, int], Piece]: A dictionary representing the board with initialized piece positions.
+
         TODO:Does not specify whose turn it is, and if castling is still available, or if a piece has been captured
         """
         position_map: Dict[Tuple[int, int], str] = {}
@@ -55,9 +83,21 @@ class Board:
         return self.board
 
     def set_correct_player_turn(self):
+        """Set the expected player based on the number of moves made."""
+
         self.expected_player = Color.WHITE if self.moves_made % 2 == 0 else Color.BLACK
 
     def check_correct_player_turn(self, notation: str) -> bool:
+        """
+        Check if the notation corresponds to the expected player's color.
+
+        Args:
+            notation (str): The algebraic notation representing the move.
+
+        Returns:
+            bool: True if the move is valid for the expected player, False otherwise.
+        """
+
         input_color = Color.WHITE if notation[0].isupper() else Color.BLACK
         if self.expected_player == input_color:
             return True
@@ -66,6 +106,16 @@ class Board:
             return False
 
     def check_move_is_valid(self, notation: str) -> bool:
+        """
+        Check if the specified move is valid.
+
+        Args:
+            notation (str): The algebraic notation representing the move.
+
+        Returns:
+            bool: True if the move is valid, False otherwise.
+        """
+
         original_pos, updated_piece = Notation.interpret_notation(notation)
         valid_moves = self.get_valid_moves(
             self.board[original_pos]
@@ -79,6 +129,8 @@ class Board:
             return False
 
     def move_piece(self, notation: str) -> None:
+        """Updates the board object based on the specified notation."""
+
         while True:
             self.set_correct_player_turn()
             if self.check_correct_player_turn(notation) and self.check_move_is_valid(
@@ -115,6 +167,12 @@ class Board:
     def get_valid_moves(self, piece: Piece) -> List[Tuple[int, int]]:
         """
         Get the valid moves for the given piece based on its type.
+
+        Args:
+            piece (Piece): The piece for which to determine valid moves.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for the piece.
         """
         pieceMovement_class = PIECE_MOVE_MAP[piece.type]
         piece_movement_instance = pieceMovement_class(piece)
@@ -126,6 +184,17 @@ class Board:
     def get_all_valid_moves(
         self, color: Color, board: Dict[Tuple[int, int], Piece]
     ) -> List[Tuple[int, int]]:
+        """
+        Get all valid moves for pieces of the specified color on the board.
+
+        Args:
+            color (Color): The color of pieces for which to find valid moves.
+            board (Dict[Tuple[int, int], Piece]): The current state of the board.
+
+        Returns:
+            List[Tuple[int, int]]: A list of valid moves for pieces of the specified color.
+        """
+
         all_valid_moves = []
         for position, piece in board.items():
             if piece.color == color:
@@ -134,6 +203,10 @@ class Board:
         return all_valid_moves
 
     def check_is_king_in_checkmate(self) -> None:
+        """
+        Check if the game is in a checkmate state.
+        """
+
         if (
             UniversalMovementValidation.is_king_in_check(
                 self.expected_player, self.board
@@ -143,6 +216,13 @@ class Board:
             self.king_in_checkmate = True
 
     def __repr__(self) -> str:
+        """
+        Generate a string representation of the chessboard based on board object.
+
+        Returns:
+            str: A string representation of the chessboard.
+        """
+
         representation = "  a   b   c   d   e   f   g   h\n"  # Column labels
 
         for x in range(8):

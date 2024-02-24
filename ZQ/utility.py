@@ -4,16 +4,30 @@ from pieces import Piece, PieceType, Color
 
 
 class BoardUtils:
+    """
+    Utility class for various operations related to the chessboard.
+    """
 
     @staticmethod
     def get_direction_vector_from_king(
         piece: Piece, king_x: int, king_y: int
     ) -> Tuple[int, int]:
+        """
+        Get the direction vector from a piece to the king.
+
+        Args:
+            piece (Piece): The piece from which the direction is calculated.
+            king_x (int): The x-coordinate of the king.
+            king_y (int): The y-coordinate of the king.
+
+        Returns:
+            Tuple[int, int]: The direction vector (dx, dy) from the piece to the king.
+        """
+
         dx = -1 if king_x > piece.x else (1 if king_x < piece.x else 0)
         dy = -1 if king_y > piece.y else (1 if king_y < piece.y else 0)
         return dx, dy
 
-    # Need to refactor this so it returns something that is unit testable
     @staticmethod
     def simulate_piece_move(
         simulated_board: Dict[Tuple[int, int], Piece],
@@ -21,6 +35,15 @@ class BoardUtils:
         new_x: int,
         new_y: int,
     ):
+        """
+        Simulate a piece move on a board.
+
+        Args:
+            simulated_board (Dict[Tuple[int, int], Piece]): The simulated chessboard.
+            piece (Piece): The piece to be moved.
+            new_x (int): The new x-coordinate of the piece.
+            new_y (int): The new y-coordinate of the piece.
+        """
         simulated_board[(piece.x, piece.y)] = Piece(
             x=piece.x, y=piece.y, type=PieceType.EMPTY
         )
@@ -33,6 +56,18 @@ class BoardUtils:
         dx: int,
         dy: int,
     ) -> bool:
+        """
+        Check if a piece is in direct contact with an opposing piece.
+
+        Args:
+            piece_at_position (Piece): The piece at the position being checked.
+            dx (int): The change in x-coordinate.
+            dy (int): The change in y-coordinate.
+
+        Returns:
+            bool: True if the piece is in direct contact with an opposing piece, False otherwise.
+        """
+
         # If it is not empty, then it must be the opposing color
         # if diagonal direction, check for opposing queen and bishop
         if abs(dx) == abs(dy) and piece_at_position.type in [
@@ -55,6 +90,16 @@ class BoardUtils:
     def promote_pawn_if_available(
         piece_to_check: Piece, board: Dict[Tuple[int], Piece]
     ) -> Dict[Tuple[int], Piece]:
+        """
+        Promote a pawn to a queen if available.
+
+        Args:
+            piece_to_check (Piece): The piece to check for pawn promotion.
+            board (Dict[Tuple[int, int], Piece]): The current state of the chessboard.
+
+        Returns:
+            Dict[Tuple[int, int], Piece]: The updated chessboard after pawn promotion.
+        """
 
         if (
             piece_to_check.type == PieceType.PAWN
