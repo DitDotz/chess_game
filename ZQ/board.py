@@ -131,7 +131,7 @@ class Board:
                 all_valid_moves.extend(piece_valid_moves)
         return all_valid_moves
 
-    def is_king_in_checkmate(
+    def check_is_king_in_checkmate(
         self, color: Color, board: Dict[Tuple[int, int], Piece]
     ) -> None:
         if (

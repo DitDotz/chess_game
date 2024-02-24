@@ -35,9 +35,17 @@ def test_get_all_valid_moves_double_check_only_king_moves():
     assert len(valid_moves) == 3
 
 
-# def test_get_all_valid_moves_single_check_king_moves_or_blockable():
-# board = Board()
-# fen = "8/8/8/5B2/q2N4/8/R7/1Q1K4"
-# board.process_fen(fen)
-# valid_moves = board.get_all_valid_moves(color=Color.WHITE, board=board.board)
-# assert len(valid_moves) == 3
+def test_is_king_in_checkmate_no():
+    board = Board()
+    fen = "3kr3/2p5/3Q4/8/8/8/8/8"
+    board.process_fen(fen)
+    board.check_is_king_in_checkmate(Color.BLACK, board.board)
+    assert board.king_in_checkmate == False
+
+
+def test_is_king_in_checkmate_yes():
+    board = Board()
+    fen = "3k4/3QQ3/8/8/8/8/8/8"
+    board.process_fen(fen)
+    board.check_is_king_in_checkmate(Color.BLACK, board.board)
+    assert board.king_in_checkmate == False
